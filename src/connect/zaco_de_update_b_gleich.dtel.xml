@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZACO_DE_UPDATE_B_GLEICH</ROLLNAME>
+    <DDLANGUAGE>D</DDLANGUAGE>
+    <DOMNAME>CHAR1</DOMNAME>
+    <HEADLEN>19</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>19</SCRLEN2>
+    <SCRLEN3>27</SCRLEN3>
+    <DDTEXT>ACONN AIN Updload obwohl Filenamen gleich</DDTEXT>
+    <REPTEXT>Update bei gleichh.</REPTEXT>
+    <SCRTEXT_S>Upd.b.glei</SCRTEXT_S>
+    <SCRTEXT_M>Update bei gleichh.</SCRTEXT_M>
+    <SCRTEXT_L>Update bei Namensgleichheit</SCRTEXT_L>
+    <DTELMASTER>D</DTELMASTER>
+    <REFKIND>D</REFKIND>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>

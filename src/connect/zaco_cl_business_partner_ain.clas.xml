@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZACO_CL_BUSINESS_PARTNER_AIN</CLSNAME>
+    <LANGU>D</LANGU>
+    <DESCRIPT>ACONN Business Partner</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_BUSINESS_PARTNER_AIN</CLSNAME>
+     <CMPNAME>GET_BP_AIN</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Liefert AIN BP ID für TPLNR</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_BUSINESS_PARTNER_AIN</CLSNAME>
+     <CMPNAME>GET_BP_ID_BY_NAME</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Liefert Business Partner ID</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_BUSINESS_PARTNER_AIN</CLSNAME>
+     <CMPNAME>GET_BP_NAME_FOR_TPLNR</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Liefert Business Partner Name</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_BUSINESS_PARTNER_AIN</CLSNAME>
+     <CMPNAME>GET_BWA_CUSTOMIZING</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Liefert Ergebnis ob Kunde BWA oder VDI wünscht</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_BUSINESS_PARTNER_AIN</CLSNAME>
+     <CMPNAME>GS_LOG</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Anwendungs-Log: Daten des Protokollkopfes</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_BUSINESS_PARTNER_AIN</CLSNAME>
+     <CMPNAME>GS_MSG</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Anwendungs-Log: Daten einer Meldung</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

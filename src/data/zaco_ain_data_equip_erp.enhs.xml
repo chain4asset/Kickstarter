@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_ENHS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TOOL>BADI_DEF</TOOL>
+   <SHORTTEXT>ACONN Erweiterung der Datensammlung im ERP BAckend</SHORTTEXT>
+   <BADI_DATA>
+    <ENH_BADI_DATA>
+     <BADI_NAME>ZACO_AIN_DATA_EQUIPMENT_ERP</BADI_NAME>
+     <INTERFACE_NAME>ZACO_IF_BADI_EQUIP_ERP</INTERFACE_NAME>
+     <CONTEXT_MODE>N</CONTEXT_MODE>
+     <DEFAULT_CLASS>ZACO_AIN_DATA_FB</DEFAULT_CLASS>
+     <BADI_SHORTTEXT>ACONN Badi Erweiterung für ERP Equipment Klasse</BADI_SHORTTEXT>
+     <BADI_SHORTTEXT_ID>0050568427221EE9918151D75C804DE0</BADI_SHORTTEXT_ID>
+     <FILTERS>
+      <ENH_BADI_FILTER>
+       <FILTER_NAME>ZACO_WERK</FILTER_NAME>
+       <FILTER_TYPE>C</FILTER_TYPE>
+       <FILTERTEXT>FIlter auf Werk</FILTERTEXT>
+       <FILTERTEXT_ID>0050568427221EE9918154100B914DE0</FILTERTEXT_ID>
+      </ENH_BADI_FILTER>
+     </FILTERS>
+     <USE_FALLBACK_CLASS>X</USE_FALLBACK_CLASS>
+    </ENH_BADI_DATA>
+   </BADI_DATA>
+  </asx:values>
+ </asx:abap>
+</abapGit>

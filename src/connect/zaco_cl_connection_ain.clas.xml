@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+    <LANGU>D</LANGU>
+    <DESCRIPT>ACONN AIN Connection</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+     <CMPNAME>BODY_RECURSIVE</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Constructs Body Rekursiv</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+     <CMPNAME>CLOSE_CONNECTION</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Closes connection to AIN</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+     <CMPNAME>CONNECT_TO_AIN</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Opens Connection to AIN</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+     <CMPNAME>CONSTRUCT_BODY</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Constructs Body</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+     <CMPNAME>CONSTRUCT_BODY_HIER</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Constructs Body in deep Hieraarchy</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+     <CMPNAME>CONSTRUCT_BODY_MAT_LANGU</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Constructs Body for Material multi Language</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+     <CMPNAME>CONSTRUCT_BODY_PROD_DATEN</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Constructs Body spezial für Produktdaten</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+     <CMPNAME>CREATE_TOKEN</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Creates OAUTH2 Token</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_CONNECTION_AIN</CLSNAME>
+     <CMPNAME>GV_RFCDEST</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>logische Destination (Wird bei Funktionsaufruf angegeben)</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

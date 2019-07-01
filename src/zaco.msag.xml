@@ -1,0 +1,388 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZACO</ARBGB>
+    <MASTERLANG>D</MASTERLANG>
+    <STEXT>Netzsch Nachrichtenklasse für AIN</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>RFC Destination falsch.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>018</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>100</MSGNR>
+     <TEXT>*------------ AIN Cockpit and Automatic</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>101</MSGNR>
+     <TEXT>Equipment &amp;1 wurde bereits an AIN übertragen. AIN ID: &amp;2.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>102</MSGNR>
+     <TEXT>Verbindung zu AIN System fehlgeschlagen.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>103</MSGNR>
+     <TEXT>Equipment &amp;1 existiert nicht !</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>104</MSGNR>
+     <TEXT>Equipment &amp;1 Stückliste Fehlerhaft : &amp;2.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>105</MSGNR>
+     <TEXT>Es konnte zu &amp;1 kein Modell ermittelt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>106</MSGNR>
+     <TEXT>Ermitteltes Modell zu Equipment &amp;1 nicht in AIN vorhanden !</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>107</MSGNR>
+     <TEXT>Zu Equipment &amp;1 konnte kein Equipment Template ermittelt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>108</MSGNR>
+     <TEXT>Bei Equipment &amp;1 trat der HTTP Fehler &amp;2 auf.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>109</MSGNR>
+     <TEXT>Equipment &amp;1 konnte mit Code &amp;2 erfolgreich übertragen werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>110</MSGNR>
+     <TEXT>Equipment &amp;1 wurde noch nicht ins AIN übertragen.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>111</MSGNR>
+     <TEXT>AIN Name des Equipmentyps &amp;1 konnte nicht gefunden werden</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>112</MSGNR>
+     <TEXT>AIN Template ID konnte für Equipmentname &amp;1 nicht gefunden werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>113</MSGNR>
+     <TEXT>Equipment &amp;1 konnte erfolgreich gelöscht werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>114</MSGNR>
+     <TEXT>Ersatzteil &amp;1 konnte an Euqipment &amp;2 erfolgreich zugeordnet werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>115</MSGNR>
+     <TEXT>Transfer for Equipment Triggered.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>116</MSGNR>
+     <TEXT>Upload der BWA für Equipment &amp;1 war nicht erfolgreich.(s.BWA Error Log)</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>117</MSGNR>
+     <TEXT>Kein File für Equipment &amp;1 vorhanden.(s.BWA Error Log)</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>118</MSGNR>
+     <TEXT>BWA Upload für Equipment &amp;1 war erfolgreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>119</MSGNR>
+     <TEXT>Upload der Dokumente f. &amp;1 nicht erfolgreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>120</MSGNR>
+     <TEXT>Equipment &amp;1 konnte nicht gelöscht werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>121</MSGNR>
+     <TEXT>Beim Löschen Equipment &amp;1 trat ein undefinierter Fehler auf.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>122</MSGNR>
+     <TEXT>Business Partner ID zu &amp;1^existiert nicht.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>123</MSGNR>
+     <TEXT>&amp;1 UOM konnte nicht gefunden werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>124</MSGNR>
+     <TEXT>Bei Attribut &amp;1 trat der HTTP Fehler &amp;2 auf.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>125</MSGNR>
+     <TEXT>Attribut &amp;1 konnte mit Code &amp;2 erfolgreich übertragen werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>126</MSGNR>
+     <TEXT>Aufruf BWA Upload, Zähler &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>127</MSGNR>
+     <TEXT>Ergebnis Upload &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>128</MSGNR>
+     <TEXT>Equipment &amp;1 upload Pfad &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>129</MSGNR>
+     <TEXT>Anzahl der hozuladenen Files &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>130</MSGNR>
+     <TEXT>Equipment &amp;1 wird gefunden : &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>131</MSGNR>
+     <TEXT>Fehler Status &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>132</MSGNR>
+     <TEXT>Keine Fíles zum Upload &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>133</MSGNR>
+     <TEXT>Zuordnung Material &amp;1 zu Equipment &amp;2 nicht löschbar o. nicht vorhanden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>134</MSGNR>
+     <TEXT>Equipmentstückliste für &amp;1 konnte nicht aufgelöst werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>135</MSGNR>
+     <TEXT>Keine System ID für System &amp;1 Mandant &amp;2 ermittelbar.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>136</MSGNR>
+     <TEXT>Für Equipment &amp;1 konnte kein Modell ermittelt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>137</MSGNR>
+     <TEXT>Für Equipment &amp;1 konnte kein AIN Modell Id ermittelt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>138</MSGNR>
+     <TEXT>Für Equipment &amp;1 konnte keine AIN Equipment Template Id ermittelt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>139</MSGNR>
+     <TEXT>Ein unbekannter Fehler trat bei Equipment &amp;1 auf.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>140</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>141</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>142</MSGNR>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>149</MSGNR>
+     <TEXT>*----------- Produktdatenblatt ab 150</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>150</MSGNR>
+     <TEXT>Sie haben keine Berechtigung das Produktdatenblatt zu laden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>151</MSGNR>
+     <TEXT>Für &amp;1 konnte kein INFOR Produktdatenblatt ermittelt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>152</MSGNR>
+     <TEXT>Bei der Erstellung des PDF für Equipment &amp;1 ist ein Fehler aufgetreten.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>153</MSGNR>
+     <TEXT>Die Serialnummer &amp;1 konnte im INFORPool nicht ermittelt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>154</MSGNR>
+     <TEXT>Die Serialnummer &amp;1 wurde nicht migriert.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>155</MSGNR>
+     <TEXT>An Equipment &amp;1 wurde bereits ein Produktdatenblatt geladen.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>512</MSGNR>
+     <TEXT>Das Produktdatenblatt konnte für &amp;1 angelegt werden.</TEXT>
+    </T100>
+   </T100>
+   <LONGTEXTS>
+    <item>
+     <DOKIL>
+      <ID>NA</ID>
+      <OBJECT>ZACO150</OBJECT>
+      <LANGU>D</LANGU>
+      <TYP>E</TYP>
+      <VERSION>0001</VERSION>
+      <MASTERLANG>X</MASTERLANG>
+      <TXTLINES>00004</TXTLINES>
+     </DOKIL>
+     <HEAD>
+      <TDOBJECT>DOKU</TDOBJECT>
+      <TDNAME>ZACO150</TDNAME>
+      <TDID>NA</TDID>
+      <TDSPRAS>D</TDSPRAS>
+      <TDFORM>S_DOCU_SHOW</TDFORM>
+      <TDSTYLE>S_DOCUS1</TDSTYLE>
+      <TDVERSION>00001</TDVERSION>
+      <TDLINESIZE>072</TDLINESIZE>
+     </HEAD>
+     <LINES>
+      <TLINE>
+       <TDFORMAT>U1</TDFORMAT>
+       <TDLINE>&amp;CAUSE&amp;</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
+       <TDLINE>Ihnen fehlen Berehctigungen</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>U1</TDFORMAT>
+       <TDLINE>&amp;SYSTEM_RESPONSE&amp;</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
+       <TDLINE>Die Prüfung des Berechtigungsobjektes ZPSPRODDAT schlug fehl</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>U1</TDFORMAT>
+       <TDLINE>&amp;WHAT_TO_DO&amp;</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
+       <TDLINE>Bitte beantragen Sie diese Berechtigung wenn Sie tatsächlich</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
+       <TDLINE>Produktdatenblätter an Equipmenst laden müssen.</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>U1</TDFORMAT>
+       <TDLINE>&amp;SYS_ADMIN&amp;</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
+      </TLINE>
+     </LINES>
+    </item>
+   </LONGTEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
