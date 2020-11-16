@@ -8,6 +8,7 @@ public section.
   constants GC_MANUFACTURER_OLD type STRING value '57BFA5F5E8DF7418E10000000A4E73B2' ##NO_TEXT.
   constants GC_MANUFACTURER type STRING value '7A412F4496CB4015BEBED9755B17543E' ##NO_TEXT.
 
+  class-methods CLASS_CONSTRUCTOR .
   methods CONSTRUCTOR
     importing
       !IO_HTTP_CLIENT type ref to IF_HTTP_CLIENT .
@@ -66,6 +67,18 @@ public section.
       !CV_OK type CHAR1
     exceptions
       NO_SYSTEM_FOUND .
+  methods GET_TEMPLATE_ID_BY_NAME
+    importing
+      !IV_TEMPLATENAME type ZACO_DE_TEMPLATE
+    changing
+      !CV_TEMPLATE_ID type STRING
+      !CV_OK type BOOLEAN .
+  methods GET_E_CL_GROUP_ID_BY_NAME
+    importing
+      !IV_NAME type GROUP
+    changing
+      !CV_GROUP_ID type STRING
+      !CV_OK type BOOLEAN .
 protected section.
 private section.
 
@@ -82,6 +95,10 @@ ENDCLASS.
 
 
 CLASS ZACO_CL_TEMPLATES IMPLEMENTATION.
+
+
+  method CLASS_CONSTRUCTOR.
+  endmethod.
 
 
 method CONSTRUCTOR.
@@ -330,6 +347,80 @@ METHOD GET_EXTERNAL_SYSTEM.
 ENDMETHOD.
 
 
+method GET_E_CL_GROUP_ID_BY_NAME.
+
+  data: lt_RESULT       Type ZACO_T_JSON_BODY.
+
+  data: ls_result       Type ZACO_S_JSON_BODY.
+
+  data: lv_service      type string.
+  data: lv_filter       type string.
+
+  data: lv_status_code  type i.
+  data: lv_reason       type string.
+  data: lv_json         type string.
+  data: lv_length       type i.
+
+  cv_ok = 'X'.
+
+  lv_filter = |/attributeGroup?$filter=name eq '|.         "Attributgruppe
+
+  concatenate ZACO_CL_CONNECTION_AIN=>gv_service lv_filter iv_name '''' into lv_service.
+
+  cl_http_utility=>set_request_uri( request = go_http_client->request
+                                    uri  = lv_service ).
+
+  go_http_client->request->set_method( 'GET' ).
+
+*-----------------------------------------------------------------------
+* Send Request and Receive Response
+*-----------------------------------------------------------------------
+  go_http_client->send(
+    EXCEPTIONS
+    http_communication_failure = 1
+    http_invalid_state         = 2
+    http_processing_failed     = 3
+    http_invalid_timeout       = 4
+    OTHERS                     = 5 ).
+
+  go_http_client->receive(
+    EXCEPTIONS
+    http_communication_failure = 1
+    http_invalid_state         = 2
+    http_processing_failed     = 3
+    OTHERS                     = 4 ).
+
+  go_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                  reason = lv_reason ).
+
+  if lv_status_code eq '200'.
+    lv_json = go_http_client->response->get_cdata( ).
+
+*------------ Lv_json deserialisieren und equipmentId filtern   ----------------*
+    CALL METHOD ZACO_CL_JSON=>JSON_TO_DATA
+      EXPORTING
+        iV_JSON = lv_json
+      CHANGING
+        CT_DATA = lt_result.
+
+    lv_length = strlen( lv_json ).
+    if lv_length > 2.
+      read table lt_result into ls_result with key name = 'id'.
+      if sy-subrc = 0.
+        cv_group_id = ls_result-value.
+      else.
+        cv_ok = space.
+      endif.
+    else.
+      cv_ok = space.
+    endif.
+  else.
+    cv_ok = space.
+  endif.
+
+endmethod.
+
+
 method GET_GROUP_ID_BY_NAME.
 
   data: lt_RESULT       Type ZACO_T_JSON_BODY.
@@ -525,7 +616,7 @@ METHOD GET_MODEL_NAME_BY_MATERIAL.
 
   DESCRIBE TABLE gt_model LINES lv_anz.
   IF lv_anz = 0.
-    SELECT * FROM zaco_t_model APPENDING TABLE gt_model.
+    SELECT * FROM zaco_t_model APPENDING TABLE gt_model. "#EC CI_NOWHERE
   ENDIF.
   READ TABLE gt_model INTO ls_model WITH KEY matnr = iv_matnr.
   IF sy-subrc = 0.
@@ -540,6 +631,80 @@ METHOD GET_MODEL_NAME_BY_MATERIAL.
   ENDIF.
 
 ENDMETHOD.
+
+
+method GET_TEMPLATE_ID_BY_NAME.
+
+  data: lt_RESULT       Type ZACO_T_JSON_BODY.
+
+  data: ls_result       Type ZACO_S_JSON_BODY.
+
+  data: lv_service      type string.
+  data: lv_filter       type string.
+
+  data: lv_status_code  type i.
+  data: lv_reason       type string.
+  data: lv_json         type string.
+  data: lv_length       type i.
+
+  cv_ok = 'X'.
+
+  lv_filter = |/template?$filter=typeCode eq '4' and name eq '|.         "'Equipment Template' and name eq '|.
+
+  concatenate ZACO_CL_CONNECTION_AIN=>gv_service lv_filter iv_templatename '''' into lv_service.
+
+  cl_http_utility=>set_request_uri( request = go_http_client->request
+                                    uri  = lv_service ).
+
+  go_http_client->request->set_method( 'GET' ).
+
+*-----------------------------------------------------------------------
+* Send Request and Receive Response
+*-----------------------------------------------------------------------
+  go_http_client->send(
+    EXCEPTIONS
+    http_communication_failure = 1
+    http_invalid_state         = 2
+    http_processing_failed     = 3
+    http_invalid_timeout       = 4
+    OTHERS                     = 5 ).
+
+  go_http_client->receive(
+    EXCEPTIONS
+    http_communication_failure = 1
+    http_invalid_state         = 2
+    http_processing_failed     = 3
+    OTHERS                     = 4 ).
+
+  go_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                  reason = lv_reason ).
+
+  if lv_status_code eq '200'.
+    lv_json = go_http_client->response->get_cdata( ).
+
+*------------ Lv_json deserialisieren und equipmentId filtern   ----------------*
+    CALL METHOD ZACO_CL_JSON=>JSON_TO_DATA
+      EXPORTING
+        iV_JSON = lv_json
+      CHANGING
+        CT_DATA = lt_result.
+
+    lv_length = strlen( lv_json ).
+    if lv_length > 2.
+      read table lt_result into ls_result with key name = 'id'.
+      if sy-subrc = 0.
+        cv_template_id = ls_result-value.
+      else.
+        cv_ok = space.
+      endif.
+    else.
+      cv_ok = space.
+    endif.
+  else.
+    cv_ok = space.
+  endif.
+
+endmethod.
 
 
 METHOD TRANSLATE_UOM_TO_AIN.

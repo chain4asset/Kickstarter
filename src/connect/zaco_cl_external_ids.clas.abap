@@ -132,7 +132,7 @@ METHOD OBJECT_TYPE.
 ENDMETHOD.
 
 
-METHOD SET_EXTERNAL_IDS.
+METHOD set_external_ids.
 
   DATA: lo_http_client TYPE REF TO if_http_client.
 
@@ -148,14 +148,14 @@ METHOD SET_EXTERNAL_IDS.
   DATA: lv_json         TYPE string.
 
   IF cv_loghndl IS INITIAL.
-    CALL METHOD zpsain_cl_logs=>create_log_handler
+    CALL METHOD zaco_cl_logs=>create_log_handler
       EXPORTING
         is_log     = gs_log
         iv_objekt  = 'EQUI'
       CHANGING
         cv_loghndl = cv_loghndl.
   ENDIF.
-  CALL METHOD zpsain_cl_connection=>connect_to_ain
+  CALL METHOD zaco_cl_connection_ain=>connect_to_ain
     EXPORTING
       iv_rfcdest               = iv_rfcdest
     CHANGING
@@ -215,7 +215,7 @@ METHOD SET_EXTERNAL_IDS.
           ct_json        = lt_json.
 
     ENDLOOP.
-    CALL METHOD zpsain_cl_connection=>construct_body
+    CALL METHOD zaco_cl_connection_ain=>construct_body
       EXPORTING
         it_body = lt_json
       CHANGING
@@ -223,7 +223,7 @@ METHOD SET_EXTERNAL_IDS.
 *-----------------------------------------------------------------------
 * Set Request URI
 *-----------------------------------------------------------------------
-    CONCATENATE zpsain_cl_connection=>gv_service '/object/externalids' INTO lv_service.
+    CONCATENATE zaco_cl_connection_ain=>gv_service '/object/externalids' INTO lv_service.
     cl_http_utility=>set_request_uri( request = lo_http_client->request
                                          uri  = lv_service ).
 
@@ -252,7 +252,7 @@ METHOD SET_EXTERNAL_IDS.
                                                     reason = lv_reason ).
 
     lv_json = lo_http_client->response->get_cdata( ).
-    CALL METHOD zpsain_cl_json=>json_to_data
+    CALL METHOD zaco_cl_json=>json_to_data
       EXPORTING
         iv_json = lv_json
       CHANGING

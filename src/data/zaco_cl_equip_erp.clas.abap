@@ -340,6 +340,7 @@ METHOD lese_equipment.
   DATA: lv_projn_ext  TYPE char40.
   DATA: lv_iloan      TYPE iloan.
   DATA: lv_tplnr      TYPE tplnr.
+  DATA: lv_kunnr      TYPE kunnr.
 
   SELECT SINGLE * FROM equi INTO ls_equi WHERE equnr = iv_equnr.
   IF sy-subrc <> 0.
@@ -430,6 +431,7 @@ METHOD lese_equipment.
             iv_tplnr = lv_tplnr.
       ENDIF.
     ENDIF.
+
 *    ENDIF.
     SELECT SINGLE * FROM eqbs INTO ls_eqbs WHERE equnr = iv_equnr.
     IF sy-subrc = 0.

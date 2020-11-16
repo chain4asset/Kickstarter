@@ -17,7 +17,7 @@ public section.
   class-methods ADD_LOG_ENTRY
     importing
       !IS_MSG type BAL_S_MSG
-      !IV_LOGHNDL type BALLOGHNDL .
+      !IV_LOGHNDL type BALLOGHNDL optional .
 protected section.
 private section.
 ENDCLASS.

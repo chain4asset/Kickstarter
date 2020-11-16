@@ -263,16 +263,37 @@
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
      <MSGNR>140</MSGNR>
+     <TEXT>Lean Equipment Massenveröffentlichung schlug fehl.</TEXT>
     </T100>
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
      <MSGNR>141</MSGNR>
+     <TEXT>Lean Equipment Massenveröffentlichung erfolgreich.</TEXT>
     </T100>
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
      <MSGNR>142</MSGNR>
+     <TEXT>Netzwerkgruppe &amp;1 konnte gefunden werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>143</MSGNR>
+     <TEXT>Netzwerkgruppe &amp;1 hat folgende Meldung erzeugt &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>144</MSGNR>
+     <TEXT>In Bearbeitung setzen schlug für Equipment &amp;1 fehl.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>145</MSGNR>
+     <TEXT>In Bearbeitung setzen war für Equipment &amp;1 erfolgreich.</TEXT>
     </T100>
     <T100>
      <SPRSL>D</SPRSL>

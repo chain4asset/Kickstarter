@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZACO_CL_SHARING</CLSNAME>
+    <LANGU>D</LANGU>
+    <DESCRIPT>ACONN Share data on AIN</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_SHARING</CLSNAME>
+     <CMPNAME>GET_GROUP_BY_NAME</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Ermittle Netzwerk Gruppen ID</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_SHARING</CLSNAME>
+     <CMPNAME>GS_MSG</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Anwendungs-Log: Daten einer Meldung</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_SHARING</CLSNAME>
+     <CMPNAME>SHARE_OBJECTS</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Freigabe für Objekte in Tabelle</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZACO_CL_SHARING</CLSNAME>
+     <CMPNAME>SHARING</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>JSON Tabelle für Sahring</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

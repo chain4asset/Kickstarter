@@ -57,6 +57,49 @@ public section.
       !CV_LOGHNDL type BALLOGHNDL optional
     exceptions
       NO_EQUIPMENT .
+  methods MASS_PUBLISH
+    importing
+      !IT_EQUI_ID type ZACO_T_EQUI_ID
+      !IV_RFCDEST type RFCDEST
+    changing
+      !CV_LOGHNDL type BALLOGHNDL
+      !CT_RESULT type ZACO_T_JSON_BODY .
+  methods SINGLE_PUBLISH
+    importing
+      !IV_EQUI_ID type STRING
+      !IV_RFCDEST type RFCDEST
+    changing
+      !CV_LOGHNDL type BALLOGHNDL
+      !CT_RESULT type ZACO_T_JSON_BODY
+      !CV_OK type CHAR1 .
+  methods CREATE_BASELINE
+    importing
+      !IV_EQUI_ID type STRING
+      !IV_RFCDEST type RFCDEST
+      !IV_DESCRIPTION type STRING
+    changing
+      !CV_LOGHNDL type BALLOGHNDL
+      !CT_RESULT type ZACO_T_JSON_BODY .
+  methods REVISE_EQUIPMENT
+    importing
+      !IV_EQUI_ID type STRING
+      !IV_RFCDEST type RFCDEST
+    changing
+      !CV_LOGHNDL type BALLOGHNDL
+      !CT_RESULT type ZACO_T_JSON_BODY
+      !CV_OK type CHAR1 .
+  methods GET_DOCUMENT_LIST
+    importing
+      !IV_EQUIPMENT_ID type STRING
+      !IV_RFCDEST type RFCDEST
+    changing
+      !CT_DOCUMENT_LIST type ZACO_TT_ASSIGNED_DOCUMENTS .
+  methods GET_SPAREPART_LIST
+    importing
+      !IV_EQUIPMENT_ID type STRING
+      !IV_RFCDEST type RFCDEST
+    changing
+      !CT_SPAREPARTS type ZACO_TT_SPAREPART_LIST .
 protected section.
 private section.
 
@@ -71,7 +114,7 @@ private section.
            attribute_id type string,
          end of gtt_attribute .
 
-  data GO_HTTP_CLIENT type ref to IF_HTTP_CLIENT .
+  data GO_HTTP_CLIENT_2 type ref to IF_HTTP_CLIENT .
   data GS_LOG type BAL_S_LOG .
   data GS_MSG type BAL_S_MSG .
   data:
@@ -246,6 +289,16 @@ private section.
   methods TECHNISCHE_ID
     importing
       !IO_EQUIPMENT type ref to ZACO_CL_EQUIP_ERP
+    changing
+      !CT_JSON type ZACO_T_JSON_BODY .
+  methods ID_TO_PUBLISH
+    importing
+      !IV_EQUI_ID type STRING
+    changing
+      !CT_JSON type ZACO_T_JSON_BODY .
+  methods BASELINE
+    importing
+      !IV_DESCRIPTION type STRING
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
 ENDCLASS.
@@ -584,6 +637,18 @@ METHOD ATTRIBUTE_VALUE_EVALUATION.
 ENDMETHOD.
 
 
+METHOD baseline.
+
+  DATA: ls_json TYPE zaco_s_json_body.
+
+  ls_json-value = iv_description.
+  ls_json-name = 'baselineDescription'.
+  APPEND ls_json TO ct_json.
+
+
+ENDMETHOD.
+
+
 METHOD BUILTDATE.
 
 *----------------------------------------------------------------------------*
@@ -643,12 +708,126 @@ endmethod.
 
 method CONSTRUCTOR.
 
-    go_http_client ?= co_http_client.
+*    go_http_client ?= co_http_client.
 
 endmethod.
 
 
-METHOD CREATE_EQUIPMENT.
+  METHOD create_baseline.
+
+    DATA: lo_http_client TYPE REF TO if_http_client.
+
+    DATA: lt_json TYPE zaco_t_json_body.
+
+    DATA: ls_equi_id TYPE zaco_s_equi_id.
+
+    DATA: lv_body TYPE string.
+    DATA: lv_service TYPE string.
+    DATA: lv_status_code  TYPE i.
+    DATA: lv_reason       TYPE string.
+    DATA: lv_json         TYPE string.
+
+    CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+      EXPORTING
+        iv_rfcdest     = iv_rfcdest
+      CHANGING
+        co_http_client = lo_http_client.
+    IF sy-subrc <> 0.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '102'.  "Verbindung zu AIN System fehlgeschlagen.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+    ENDIF.
+
+    CALL METHOD me->baseline
+      EXPORTING
+        iv_description = iv_description
+      CHANGING
+        ct_json        = lt_json.
+
+*-----------------------------------------------------------------------
+* Set Request URI
+*-----------------------------------------------------------------------
+    CONCATENATE zaco_cl_connection_ain=>gv_service '/equipment(' iv_equi_id ')/baselines' INTO lv_service.
+    cl_http_utility=>set_request_uri( request = lo_http_client->request
+                                         uri  = lv_service ).
+
+    lo_http_client->request->set_method( 'POST' ).
+    lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+
+*-----------------------------------------------------------------------------------------------*
+
+*           Bilden JSON Body und Request
+
+*-----------------------------------------------------------------------------------------------*
+    CALL METHOD zaco_cl_connection_ain=>construct_body
+      EXPORTING
+        it_body = lt_json
+      CHANGING
+        cv_body = lv_body.
+
+    lo_http_client->request->set_cdata( lv_body ).
+**-----------------------------------------------------------------------
+** Send Request and Receive Response
+**-----------------------------------------------------------------------
+    lo_http_client->send(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      http_invalid_timeout       = 4
+      OTHERS                     = 5 ).
+
+    lo_http_client->receive(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      OTHERS                     = 4 ).
+
+    lo_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                    reason = lv_reason ).
+
+*  if lv_status_code ne 200.
+*-----------------------------------------------------------------------
+* Refresh HTTP Request
+*-----------------------------------------------------------------------
+    IF lv_status_code NE 200.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '143'.  "Baseline konnte nicht erzeugt werden
+      gs_msg-msgv1 = lv_status_code.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+    ELSE.
+      gs_msg-msgty = 'I'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '144'.  "Baseline erzeugt
+      gs_msg-msgv1 = lv_status_code.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+    ENDIF.
+
+    lv_json = lo_http_client->response->get_cdata( ).
+    CALL METHOD zaco_cl_json=>json_to_data
+      EXPORTING
+        iv_json = lv_json
+      CHANGING
+        ct_data = ct_result.
+
+    CALL METHOD lo_http_client->close( ).
+
+  ENDMETHOD.
+
+
+METHOD create_equipment.
 
   DATA: lo_template     TYPE REF TO zaco_cl_templates.
   DATA: lo_http_client  TYPE REF TO if_http_client.
@@ -673,15 +852,24 @@ METHOD CREATE_EQUIPMENT.
   DATA: lv_matnr        TYPE matnr.
   DATA: lv_tplnr        TYPE tplnr.
 
+  CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+    EXPORTING
+      iv_rfcdest               = iv_rfcdest
+    CHANGING
+      co_http_client           = lo_http_client
+    EXCEPTIONS
+      dest_not_found           = 1
+      destination_no_authority = 2
+      OTHERS                   = 3.
 *-----------------------------------------------------------------------
 * Set Request URI
 *-----------------------------------------------------------------------
   CONCATENATE zaco_cl_connection_ain=>gv_service '/equipment' INTO lv_service.
-  cl_http_utility=>set_request_uri( request = go_http_client->request
+  cl_http_utility=>set_request_uri( request = lo_http_client->request
                                        uri  = lv_service ).
 
-  go_http_client->request->set_method( 'POST' ).
-  go_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+  lo_http_client->request->set_method( 'POST' ).
+  lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
 
   CALL METHOD me->data_gathering
     EXPORTING
@@ -707,7 +895,7 @@ METHOD CREATE_EQUIPMENT.
         ls_result-value = lv_equnr.
         APPEND ls_result TO ct_result.
         ls_result-name = 'Meldung'.
-        ls_result-value = text-002.
+        ls_result-value = TEXT-002.
         APPEND ls_result TO ct_result.
       WHEN 2.
         gs_msg-msgty = 'E'.
@@ -718,7 +906,7 @@ METHOD CREATE_EQUIPMENT.
         ls_result-value = lv_equnr.
         APPEND ls_result TO ct_result.
         ls_result-name = 'Meldung'.
-        ls_result-value = text-003.
+        ls_result-value = TEXT-003.
         APPEND ls_result TO ct_result.
       WHEN 3.
         gs_msg-msgty = 'E'.
@@ -729,7 +917,7 @@ METHOD CREATE_EQUIPMENT.
         ls_result-value = lv_equnr.
         APPEND ls_result TO ct_result.
         ls_result-name = 'Meldung'.
-        ls_result-value = text-004.
+        ls_result-value = TEXT-004.
         APPEND ls_result TO ct_result.
       WHEN OTHERS.
         gs_msg-msgty = 'E'.
@@ -740,7 +928,7 @@ METHOD CREATE_EQUIPMENT.
         ls_result-value = lv_equnr.
         APPEND ls_result TO ct_result.
         ls_result-name = 'Meldung'.
-        ls_result-value = text-005.
+        ls_result-value = TEXT-005.
         APPEND ls_result TO ct_result.
     ENDCASE.
     CALL METHOD zaco_cl_logs=>add_log_entry
@@ -760,11 +948,11 @@ METHOD CREATE_EQUIPMENT.
     CHANGING
       cv_body = lv_body.
 
-  go_http_client->request->set_cdata( lv_body ).
+  lo_http_client->request->set_cdata( lv_body ).
 **-----------------------------------------------------------------------
 ** Send Request and Receive Response
 **-----------------------------------------------------------------------
-  go_http_client->send(
+  lo_http_client->send(
     EXCEPTIONS
     http_communication_failure = 1
     http_invalid_state         = 2
@@ -772,14 +960,14 @@ METHOD CREATE_EQUIPMENT.
     http_invalid_timeout       = 4
     OTHERS                     = 5 ).
 
-  go_http_client->receive(
+  lo_http_client->receive(
     EXCEPTIONS
     http_communication_failure = 1
     http_invalid_state         = 2
     http_processing_failed     = 3
     OTHERS                     = 4 ).
 
-  go_http_client->response->get_status( IMPORTING code   = lv_status_code
+  lo_http_client->response->get_status( IMPORTING code   = lv_status_code
                                                   reason = lv_reason ).
 
 *  if lv_status_code ne 200.
@@ -814,7 +1002,7 @@ METHOD CREATE_EQUIPMENT.
 
   ENDIF.
 
-  lv_json = go_http_client->response->get_cdata( ).
+  lv_json = lo_http_client->response->get_cdata( ).
   CALL METHOD zaco_cl_json=>json_to_data
     EXPORTING
       iv_json = lv_json
@@ -823,7 +1011,7 @@ METHOD CREATE_EQUIPMENT.
 *  else.
 *    refresh ct_result.
 *  endif.
-  CALL METHOD go_http_client->close( ).
+  CALL METHOD lo_http_client->close( ).
 ENDMETHOD.
 
 
@@ -1056,6 +1244,7 @@ ENDMETHOD.
 METHOD delete_equipment.
 
   DATA: lo_template     TYPE REF TO zaco_cl_templates.
+  DATA: lo_http_client  TYPE REF TO if_http_client.
 
   DATA: lv_json         TYPE string.
   DATA: lv_status_code  TYPE i.
@@ -1074,6 +1263,15 @@ METHOD delete_equipment.
       CHANGING
         cv_loghndl = cv_loghndl.
   ENDIF.
+  CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+    EXPORTING
+      iv_rfcdest               = iv_rfcdest
+    CHANGING
+      co_http_client           = lo_http_client
+    EXCEPTIONS
+      dest_not_found           = 1
+      destination_no_authority = 2
+      OTHERS                   = 3.
 **--------
 
   CALL METHOD io_equipment->get_equnr
@@ -1107,16 +1305,16 @@ METHOD delete_equipment.
 * Set Request URI
 *-----------------------------------------------------------------------
   CONCATENATE zaco_cl_connection_ain=>gv_service '/equipment(' lv_id ')' INTO lv_service.
-  cl_http_utility=>set_request_uri( request = go_http_client->request
+  cl_http_utility=>set_request_uri( request = lo_http_client->request
                                        uri  = lv_service ).
 
-  go_http_client->request->set_method( 'DELETE' ).
-  go_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+  lo_http_client->request->set_method( 'DELETE' ).
+  lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
 
 **-----------------------------------------------------------------------
 ** Send Request and Receive Response
 **-----------------------------------------------------------------------
-  go_http_client->send(
+  lo_http_client->send(
     EXCEPTIONS
     http_communication_failure = 1
     http_invalid_state         = 2
@@ -1124,14 +1322,14 @@ METHOD delete_equipment.
     http_invalid_timeout       = 4
     OTHERS                     = 5 ).
 
-  go_http_client->receive(
+  lo_http_client->receive(
     EXCEPTIONS
     http_communication_failure = 1
     http_invalid_state         = 2
     http_processing_failed     = 3
     OTHERS                     = 4 ).
 
-  go_http_client->response->get_status( IMPORTING code   = lv_status_code
+  lo_http_client->response->get_status( IMPORTING code   = lv_status_code
                                                   reason = lv_reason ).
 
 *  if lv_status_code ne 200.
@@ -1161,7 +1359,7 @@ METHOD delete_equipment.
 
   ENDIF.
 
-  lv_json = go_http_client->response->get_cdata( ).
+  lv_json = lo_http_client->response->get_cdata( ).
   CALL METHOD zaco_cl_json=>json_to_data
     EXPORTING
       iv_json = lv_json
@@ -1170,6 +1368,7 @@ METHOD delete_equipment.
 *  else.
 *    refresh ct_result.
 *  endif.
+  CALL METHOD lo_http_client->close( ).
 
 ENDMETHOD.
 
@@ -1205,7 +1404,7 @@ METHOD equipment_already_transferred.
   DATA: lv_json         TYPE string.
   DATA: lv_length       TYPE i.
 
-  CALL METHOD zpsain_cl_connection=>connect_to_ain
+  CALL METHOD zaco_cl_connection_ain=>connect_to_ain
     EXPORTING
       iv_rfcdest               = iv_rfcdest
     CHANGING
@@ -1401,6 +1600,81 @@ method GET_ATTRIBUTE_ID.
 endmethod.
 
 
+  METHOD GET_DOCUMENT_LIST.
+
+    DATA: lo_http_client   TYPE REF TO if_http_client.
+
+    DATA: lv_service      TYPE string.
+    DATA: lv_json         TYPE string.
+    DATA: lv_status_code  TYPE i.
+    DATA: lv_reason       TYPE string.
+
+    CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+      EXPORTING
+        iv_rfcdest               = iv_rfcdest
+      CHANGING
+        co_http_client           = lo_http_client
+      EXCEPTIONS
+        dest_not_found           = 1
+        destination_no_authority = 2
+        OTHERS                   = 3.
+    IF sy-subrc <> 0.
+      MESSAGE e001(zpsain).
+    ENDIF.
+
+    CLEAR: lv_service, lv_json.
+
+*-----------------------------------------------------------------------
+* Set Request URI
+*-----------------------------------------------------------------------
+    CONCATENATE zaco_cl_connection_ain=>gv_service '/equipment(' iv_equipment_id ')/documents' INTO lv_service.
+    cl_http_utility=>set_request_uri( request = lo_http_client->request
+                                         uri  = lv_service ).
+
+    lo_http_client->request->set_method( 'GET' ).
+    lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+
+**-----------------------------------------------------------------------
+** Send Request and Receive Response
+**-----------------------------------------------------------------------
+    lo_http_client->send(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      http_invalid_timeout       = 4
+      OTHERS                     = 5 ).
+
+    lo_http_client->receive(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      OTHERS                     = 4 ).
+
+    lo_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                    reason = lv_reason ).
+
+
+    lv_json = lo_http_client->response->get_cdata( ).
+    CALL METHOD /ui2/cl_json=>deserialize
+      EXPORTING
+        json        = lv_json
+*       jsonx       =
+        pretty_name = /ui2/cl_json=>pretty_mode-camel_case
+*       assoc_arrays     = C_BOOL-FALSE
+*       assoc_arrays_opt = C_BOOL-FALSE
+*       name_mappings    =
+      CHANGING
+        data        = ct_document_list.
+
+    CALL METHOD zaco_cl_connection_ain=>close_connection
+      CHANGING
+        co_http_client = lo_http_client.
+
+  ENDMETHOD.
+
+
 method GET_EQUIPMENT_TEMPLATE_ID.
 
 *  data: lo_http_client type ref to if_http_client.
@@ -1460,6 +1734,81 @@ method GET_EQUIPMENT_TEMPLATE_ID.
 endmethod.
 
 
+  METHOD get_sparepart_list.
+
+    DATA: lo_http_client   TYPE REF TO if_http_client.
+
+    DATA: lv_service      TYPE string.
+    DATA: lv_json         TYPE string.
+    DATA: lv_status_code  TYPE i.
+    DATA: lv_reason       TYPE string.
+
+    CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+      EXPORTING
+        iv_rfcdest               = iv_rfcdest
+      CHANGING
+        co_http_client           = lo_http_client
+      EXCEPTIONS
+        dest_not_found           = 1
+        destination_no_authority = 2
+        OTHERS                   = 3.
+    IF sy-subrc <> 0.
+      MESSAGE e001(zpsain).
+    ENDIF.
+
+    CLEAR: lv_service, lv_json.
+
+*-----------------------------------------------------------------------
+* Set Request URI
+*-----------------------------------------------------------------------
+    CONCATENATE zaco_cl_connection_ain=>gv_service '/equipment(' iv_equipment_id ')/spareparts' INTO lv_service.
+    cl_http_utility=>set_request_uri( request = lo_http_client->request
+                                         uri  = lv_service ).
+
+    lo_http_client->request->set_method( 'GET' ).
+    lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+
+**-----------------------------------------------------------------------
+** Send Request and Receive Response
+**-----------------------------------------------------------------------
+    lo_http_client->send(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      http_invalid_timeout       = 4
+      OTHERS                     = 5 ).
+
+    lo_http_client->receive(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      OTHERS                     = 4 ).
+
+    lo_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                    reason = lv_reason ).
+
+
+    lv_json = lo_http_client->response->get_cdata( ).
+    CALL METHOD /ui2/cl_json=>deserialize
+      EXPORTING
+        json        = lv_json
+*       jsonx       =
+        pretty_name = /ui2/cl_json=>pretty_mode-camel_case
+*       assoc_arrays     = C_BOOL-FALSE
+*       assoc_arrays_opt = C_BOOL-FALSE
+*       name_mappings    =
+      CHANGING
+        data        = ct_spareparts.
+
+    CALL METHOD zaco_cl_connection_ain=>close_connection
+      CHANGING
+        co_http_client = lo_http_client.
+
+  ENDMETHOD.
+
+
 method GET_TYPE.
 
   data: lv_typbz type typbz.
@@ -1488,6 +1837,17 @@ method GROUP_ATTRIBUTE_TEMPLATE.
   endif.
 
 endmethod.
+
+
+METHOD id_to_publish.
+
+  DATA: ls_json TYPE zaco_s_json_body.
+
+  ls_json-value = iv_equi_id.
+  ls_json-name = 'id'.
+  APPEND ls_json TO ct_json.
+
+ENDMETHOD.
 
 
 METHOD internalid.
@@ -1539,6 +1899,125 @@ method LONG.
   append ls_json to ct_json.
 
 endmethod.
+
+
+  METHOD mass_publish.
+
+    DATA: lo_http_client TYPE REF TO if_http_client.
+
+    DATA: lt_json TYPE zaco_t_json_body.
+
+    DATA: ls_equi_id TYPE zaco_s_equi_id.
+
+    DATA: lv_body TYPE string.
+    DATA: lv_service TYPE string.
+    DATA: lv_status_code  TYPE i.
+    DATA: lv_reason       TYPE string.
+    DATA: lv_json         TYPE string.
+
+    LOOP AT it_equi_id INTO ls_equi_id.
+      CALL METHOD me->id_to_publish
+        EXPORTING
+          iv_equi_id = ls_equi_id-equi_id
+        CHANGING
+          ct_json    = lt_json.
+    ENDLOOP.
+
+    CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+      EXPORTING
+        iv_rfcdest     = iv_rfcdest
+      CHANGING
+        co_http_client = lo_http_client.
+    IF sy-subrc <> 0.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '102'.  "Verbindung zu AIN System fehlgeschlagen.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+    ENDIF.
+
+*-----------------------------------------------------------------------
+* Set Request URI
+*-----------------------------------------------------------------------
+    CONCATENATE zaco_cl_connection_ain=>gv_service '/equipment/publish' INTO lv_service.
+    cl_http_utility=>set_request_uri( request = lo_http_client->request
+                                         uri  = lv_service ).
+
+    lo_http_client->request->set_method( 'PUT' ).
+    lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+
+*-----------------------------------------------------------------------------------------------*
+
+*           Bilden JSON Body und Request
+
+*-----------------------------------------------------------------------------------------------*
+    CALL METHOD zaco_cl_connection_ain=>construct_body
+      EXPORTING
+        it_body = lt_json
+      CHANGING
+        cv_body = lv_body.
+    concatenate '[' lv_body ']' into lv_body.
+
+    lo_http_client->request->set_cdata( lv_body ).
+**-----------------------------------------------------------------------
+** Send Request and Receive Response
+**-----------------------------------------------------------------------
+    lo_http_client->send(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      http_invalid_timeout       = 4
+      OTHERS                     = 5 ).
+
+    lo_http_client->receive(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      OTHERS                     = 4 ).
+
+    lo_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                    reason = lv_reason ).
+
+*  if lv_status_code ne 200.
+*-----------------------------------------------------------------------
+* Refresh HTTP Request
+*-----------------------------------------------------------------------
+    IF lv_status_code NE 200.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '140'.  "Veröffentlichung achlug fehl
+      gs_msg-msgv1 = lv_status_code.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+
+    ELSE.
+      gs_msg-msgty = 'I'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '141'.  "Veröffentlichung erfolgreich
+      gs_msg-msgv1 = lv_status_code.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+
+    ENDIF.
+
+    lv_json = lo_http_client->response->get_cdata( ).
+    CALL METHOD zaco_cl_json=>json_to_data
+      EXPORTING
+        iv_json = lv_json
+      CHANGING
+        ct_data = ct_result.
+
+    CALL METHOD lo_http_client->close( ).
+
+  ENDMETHOD.
 
 
 METHOD modelid.
@@ -1629,6 +2108,110 @@ METHOD OPERATORID.
 ENDMETHOD.
 
 
+  METHOD revise_equipment.
+
+    DATA: lo_http_client TYPE REF TO if_http_client.
+
+    DATA: lt_json TYPE zaco_t_json_body.
+
+    DATA: ls_equi_id TYPE zaco_s_equi_id.
+
+    DATA: lv_body TYPE string.
+    DATA: lv_service TYPE string.
+    DATA: lv_status_code  TYPE i.
+    DATA: lv_reason       TYPE string.
+    DATA: lv_json         TYPE string.
+
+    CALL METHOD me->id_to_publish
+      EXPORTING
+        iv_equi_id = iv_equi_id
+      CHANGING
+        ct_json    = lt_json.
+
+    CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+      EXPORTING
+        iv_rfcdest     = iv_rfcdest
+      CHANGING
+        co_http_client = lo_http_client.
+    IF sy-subrc <> 0.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '102'.  "Verbindung zu AIN System fehlgeschlagen.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+    ENDIF.
+
+*-----------------------------------------------------------------------
+* Set Request URI
+*-----------------------------------------------------------------------
+    CONCATENATE zaco_cl_connection_ain=>gv_service '/equipment(' iv_equi_id ')/revise' INTO lv_service.
+    cl_http_utility=>set_request_uri( request = lo_http_client->request
+                                         uri  = lv_service ).
+
+    lo_http_client->request->set_method( 'PUT' ).
+    lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+
+**-----------------------------------------------------------------------
+** Send Request and Receive Response
+**-----------------------------------------------------------------------
+    lo_http_client->send(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      http_invalid_timeout       = 4
+      OTHERS                     = 5 ).
+
+    lo_http_client->receive(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      OTHERS                     = 4 ).
+
+    lo_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                    reason = lv_reason ).
+
+*  if lv_status_code ne 200.
+*-----------------------------------------------------------------------
+* Refresh HTTP Request
+*-----------------------------------------------------------------------
+    IF lv_status_code NE 200.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '144'.  "In Bearbeitung setzen achlug fehl
+      gs_msg-msgv1 = iv_equi_id.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+      CLEAR cv_ok.
+    ELSE.
+      gs_msg-msgty = 'I'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '145'.  "Veröffentlichung erfolgreich
+      gs_msg-msgv1 = iv_equi_id.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+      cv_ok = 'X'.
+    ENDIF.
+
+    lv_json = lo_http_client->response->get_cdata( ).
+    CALL METHOD zaco_cl_json=>json_to_data
+      EXPORTING
+        iv_json = lv_json
+      CHANGING
+        ct_data = ct_result.
+
+    CALL METHOD lo_http_client->close( ).
+
+  ENDMETHOD.
+
+
 METHOD SERIALNUMBER.
 
   DATA: ls_json TYPE zaco_s_json_body.
@@ -1668,6 +2251,122 @@ method SHORT.
   append ls_json to ct_json.
 
 endmethod.
+
+
+  METHOD single_publish.
+
+    DATA: lo_http_client TYPE REF TO if_http_client.
+
+    DATA: lt_json TYPE zaco_t_json_body.
+
+    DATA: ls_equi_id TYPE zaco_s_equi_id.
+
+    DATA: lv_body TYPE string.
+    DATA: lv_service TYPE string.
+    DATA: lv_status_code  TYPE i.
+    DATA: lv_reason       TYPE string.
+    DATA: lv_json         TYPE string.
+
+    CALL METHOD me->id_to_publish
+      EXPORTING
+        iv_equi_id = iv_equi_id
+      CHANGING
+        ct_json    = lt_json.
+
+    CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+      EXPORTING
+        iv_rfcdest     = iv_rfcdest
+      CHANGING
+        co_http_client = lo_http_client.
+    IF sy-subrc <> 0.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '102'.  "Verbindung zu AIN System fehlgeschlagen.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+    ENDIF.
+
+*-----------------------------------------------------------------------
+* Set Request URI
+*-----------------------------------------------------------------------
+    CONCATENATE zaco_cl_connection_ain=>gv_service '/equipment(' iv_equi_id ')/publish' INTO lv_service.
+    cl_http_utility=>set_request_uri( request = lo_http_client->request
+                                         uri  = lv_service ).
+
+    lo_http_client->request->set_method( 'PUT' ).
+    lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+
+*-----------------------------------------------------------------------------------------------*
+
+*           Bilden JSON Body und Request
+
+*-----------------------------------------------------------------------------------------------*
+*    CALL METHOD zaco_cl_connection_ain=>construct_body
+*      EXPORTING
+*        it_body = lt_json
+*      CHANGING
+*        cv_body = lv_body.
+*
+*    lo_http_client->request->set_cdata( lv_body ).
+**-----------------------------------------------------------------------
+** Send Request and Receive Response
+**-----------------------------------------------------------------------
+    lo_http_client->send(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      http_invalid_timeout       = 4
+      OTHERS                     = 5 ).
+
+    lo_http_client->receive(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      OTHERS                     = 4 ).
+
+    lo_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                    reason = lv_reason ).
+
+*  if lv_status_code ne 200.
+*-----------------------------------------------------------------------
+* Refresh HTTP Request
+*-----------------------------------------------------------------------
+    IF lv_status_code NE 200.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '140'.  "Veröffentlichung achlug fehl
+      gs_msg-msgv1 = lv_status_code.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+      clear cv_ok.
+    ELSE.
+      gs_msg-msgty = 'I'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgno = '141'.  "Veröffentlichung erfolgreich
+      gs_msg-msgv1 = lv_status_code.
+      CALL METHOD zaco_cl_logs=>add_log_entry
+        EXPORTING
+          is_msg     = gs_msg
+          iv_loghndl = cv_loghndl.
+       cv_ok = 'X'.
+    ENDIF.
+
+    lv_json = lo_http_client->response->get_cdata( ).
+    CALL METHOD zaco_cl_json=>json_to_data
+      EXPORTING
+        iv_json = lv_json
+      CHANGING
+        ct_data = ct_result.
+
+    CALL METHOD lo_http_client->close( ).
+
+  ENDMETHOD.
 
 
 method SOURCEBPROLE.

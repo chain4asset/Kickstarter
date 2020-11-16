@@ -68,7 +68,7 @@ CLASS ZACO_CL_PRINT_TO_PDF IMPLEMENTATION.
       lv_user_settings = ''.
 
 *   Ausgabeoptionen setzen
-      ls_output_options-tddest   = 'LOCL'.  "Druckerausgabegerät
+      ls_output_options-tddest   = 'ZPDB'.            " 'LOCL'.  "Druckerausgabegerät
       ls_output_options-tdcopies = ''.  "Anzahl Druckexemplare
 
 *   Kontrollparameter setzen

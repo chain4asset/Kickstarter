@@ -23,7 +23,7 @@ public section.
       !CT_RESULT type ZACO_T_JSON_BODY .
   methods GET_BWA_CUSTOMIZING
     importing
-      !IV_TPLNR type TPLNR
+      !IV_KUNNR type KUNNR
     changing
       !CV_BWA_ON type CHAR1 default SPACE .
 protected section.
@@ -224,7 +224,7 @@ METHOD GET_BP_ID_BY_NAME.
 ENDMETHOD.
 
 
-METHOD GET_BP_NAME_FOR_TPLNR.
+METHOD get_bp_name_for_tplnr.
 *---------------------------------------------------------------------------*
 *
 *    Copyright (C) 2019 NETZSCH Pumps and Systems GmbH
@@ -250,15 +250,17 @@ METHOD GET_BP_NAME_FOR_TPLNR.
 *    aconn@nedgex.com
 *
 *---------------------------------------------------------------------------*
-  data: lv_tplnr type char30.
+  DATA: lv_tplnr TYPE char30.
+  DATA: lv_kunnr TYPE kunnr.
 
   CALL FUNCTION 'CONVERSION_EXIT_TPLNR_OUTPUT'
     EXPORTING
-      input         = iv_tplnr
-   IMPORTING
-      OUTPUT        = lv_tplnr.
+      input  = iv_tplnr
+    IMPORTING
+      output = lv_tplnr.
 
-  SELECT SINGLE bp_ain FROM zaco_busi_par INTO cv_bp_name WHERE tplnr = lv_tplnr.
+  lv_kunnr = lv_tplnr.
+  SELECT SINGLE bp_ain FROM zaco_busi_par INTO cv_bp_name WHERE kunnr = lv_kunnr.
 
 ENDMETHOD.
 
@@ -291,7 +293,7 @@ METHOD GET_BWA_CUSTOMIZING.
 *---------------------------------------------------------------------------*
   DATA: ls_busi_par TYPE zaco_busi_par.
 
-  SELECT SINGLE * FROM zaco_busi_par INTO ls_busi_par WHERE tplnr = iv_tplnr.
+  SELECT SINGLE * FROM zaco_busi_par INTO ls_busi_par WHERE kunnr = iv_kunnr.
   IF sy-subrc = 0.
     IF ls_busi_par-bwa_vdi = space.
       cv_bwa_on = 'X'.

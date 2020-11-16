@@ -115,6 +115,12 @@
      <CLASFIELD>*</CLASFIELD>
     </DD08V>
    </DD08V_TABLE>
+   <TABL_EXTRAS>
+    <TDDAT>
+     <TABNAME>ZACO_T_GROUPS</TABNAME>
+     <CCLASS>ZAIN</CCLASS>
+    </TDDAT>
+   </TABL_EXTRAS>
   </asx:values>
  </asx:abap>
 </abapGit>

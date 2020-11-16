@@ -161,7 +161,7 @@ METHOD connect_to_ain.
     SELECT SINGLE rfcdest ain_client_id ain_client_secret ain_token_url FROM zaco_tenant_sy INTO (gv_rfcdest, lv_client_id, lv_client_secret, lv_token_url ) WHERE token_rfc = iv_rfcdest.
 
   ELSE.
-    SELECT SINGLE rfcdest ain_client_id ain_client_secret ain_token_url FROM zaco_tenant_sy INTO (lv_rfcdest, lv_client_id, lv_client_secret, lv_token_url ) WHERE sysid = sy-sysid.
+    SELECT SINGLE rfcdest ain_client_id ain_client_secret ain_token_url FROM zaco_tenant_sy INTO (gv_rfcdest, lv_client_id, lv_client_secret, lv_token_url ) WHERE sysid = sy-sysid.
     IF sy-subrc <> 0.
       RAISE dest_not_found.      "im Notfall immer AIN_TEST
     ENDIF.
