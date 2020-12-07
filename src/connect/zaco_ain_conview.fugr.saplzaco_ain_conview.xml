@@ -4,7 +4,7 @@
   <asx:values>
    <PROGDIR>
     <NAME>SAPLZACO_AIN_CONVIEW</NAME>
-    <SQLX>X</SQLX>
+    <STATE>A</STATE>
     <DBAPL>S</DBAPL>
     <DBNA>D$</DBNA>
     <SUBC>F</SUBC>

@@ -10,7 +10,7 @@ public section.
   class-methods CREATE_LOG_HANDLER
     importing
       !IS_LOG type BAL_S_LOG
-      !IV_OBJEKT type ZPSAIN_DE_BUSINESS_OBJEKT
+      !IV_OBJEKT type CHAR10 optional
       !IV_SUBOBJECT type BALSUBOBJ optional
     changing
       !CV_LOGHNDL type BALLOGHNDL .

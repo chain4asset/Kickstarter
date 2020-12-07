@@ -4,116 +4,67 @@ class ZACO_CL_MATERIAL definition
 
 public section.
 
-  methods GET_MATNR
-    changing
-      !CV_MATNR type MATNR .
-  methods GET_KTXT
-    returning
-      value(CV_MAKTX) type MAKTX .
-  methods GET_WBZ
-    returning
-      value(CV_WZEIT) type WZEIT .
-  methods GET_DISPOMERKMAL
-    returning
-      value(CV_DISMM) type DISMM .
-  methods SET_MATNR
-    importing
-      !IV_MATNR type MATNR
-      !IV_WERKS type WERKS_D .
-  methods SET_WERKS
-    importing
-      !IV_WERKS type WERKS_D .
-  methods GET_WERKS
-    changing
-      !CV_WERKS type WERKS_D .
-  methods SET_NORMT
-    importing
-      !IV_NORMT type NORMT .
-  methods SET_WRKST
-    importing
-      !IV_WRKST type WRKST .
-  methods SET_BAUGRUPPE
-    importing
-      !IV_SOBSL type SOBSL .
-  methods GET_NORMT
-    changing
-      !CV_NORMT type NORMT .
-  methods GET_WRKST
-    changing
-      !CV_WRKST type WRKST .
+  methods ERMITTLE_WZEIT .
   methods GET_BAUGRUPPE
     changing
-      !CV_BAUGRUPPE type ZPSPP_DE_BAUGRUPPE .
-  methods ERMITTLE_WZEIT .
-  methods SET_RUEZT
-    importing
-      !IV_RUEZT type RUEZT .
-  methods SET_BEARZ
-    importing
-      !IV_BEARZ type BEARZ .
-  methods SET_TRANZ
-    importing
-      !IV_TRANZ type TRANZ .
-  methods GET_RUEZT
-    changing
-      !CV_RUEZT type RUEZT .
+      !CV_BAUGRUPPE type ZACO_DE_BAUGRUPPE .
   methods GET_BEARZ
     changing
       !CV_BEARZ type BEARZ .
-  methods GET_TRANZ
-    changing
-      !CV_TRANZ type TRANZ .
-  methods SET_BESKZ
-    importing
-      !IV_BESKZ type BESKZ .
   methods GET_BESKZ
     changing
       !CV_BESKZ type BESKZ .
-  methods SET_PLIFZ
-    importing
-      !IV_PLIFZ type PLIFZ .
-  methods GET_PLIFZ
+  methods GET_BREIT
     changing
-      !CV_PLIFZ type PLIFZ .
-  methods SET_MSTAE
-    importing
-      !IV_MSTAE type MSTAE .
-  methods GET_MSTAE
+      !CV_BREIT type BREIT .
+  methods GET_BRGEW
     changing
-      !CV_MSTAE type MSTAE .
-  methods SET_GROES
-    importing
-      !IV_GROES type GROES .
+      !CV_BRGEW type BRGEW .
+  methods GET_DISPO
+    changing
+      !CV_DISPO type DISPO .
+  methods GET_DISPOMERKMAL
+    returning
+      value(CV_DISMM) type DISMM .
+  methods GET_EISBE
+    changing
+      !CV_EISBE type EISBE .
+  methods GET_EKGRP
+    changing
+      !CV_EKGRP type EKGRP .
+  methods GET_FHORI
+    changing
+      !CV_FHORI type FHORI .
+  methods GET_GEWEI
+    changing
+      !CV_GEWEI type GEWEI .
   methods GET_GROES
     changing
       !CV_GROES type GROES .
-  methods SET_MMSTA
-    importing
-      !IV_MMSTA type MMSTA .
-  methods GET_MMSTA
+  methods GET_GRUTXT
     changing
-      !CV_MMSTA type MMSTA .
-  methods GET_MVER
+      value(CT_GRUTXT) type TLINETAB .
+  methods GET_HOEHE
     changing
-      !CT_MVER type ZPSPP_TT_MVER .
-  methods SET_VOLUM
-    importing
-      !IV_VOLUM type MARA-VOLUM .
-  methods GET_VOLUM
+      !CV_HOEHE type HOEHE .
+  methods GET_KTXT
+    returning
+      value(CV_MAKTX) type MAKTX .
+  methods GET_LABST
     changing
-      value(CV_VOLUM) type MARA-VOLUM .
-  methods SET_VOLEH
-    importing
-      !IV_VOLEH type VOLEH .
-  methods GET_VOLEH
+      !CV_LABST type LABST .
+  methods GET_LAENG
     changing
-      !CV_VOLEH type VOLEH .
-  methods GET_MFRPN
+      !CV_LAENG type LAENG .
+  methods GET_LBKUM
     changing
-      !CV_MFRPN type MFRPN .
-  methods SET_MFRPN
-    importing
-      !IV_MFRPN type MFRPN .
+      !CV_LBKUM type LBKUM .
+  methods GET_LGRAD
+    changing
+      !CV_LGRAD type LGRAD .
+  methods GET_MAKT
+    changing
+      !CT_MAKT type MAKT_TAB .
   methods GET_MARM
     changing
       value(CT_MARM) type MARM_TAB .
@@ -124,171 +75,220 @@ public section.
       value(CS_MARM) type MARM
     exceptions
       NOT_FOUND .
-  methods SET_MEINS
-    importing
-      !IV_MEINS type MEINS .
-  methods GET_MEINS
-    changing
-      !CV_MEINS type MEINS .
-  methods SET_KTXT
-    importing
-      !IV_MAKTX type MAKTX .
-  methods SET_WBZ
-    importing
-      !IV_WZEIT type WZEIT .
-  methods SET_DISPOMERKMAL
-    importing
-      !IV_DISMM type DISMM .
-  methods SET_NTGEW
-    importing
-      !IV_NTGEW type NTGEW .
-  methods GET_NETGW
-    changing
-      !CV_NTGEW type NTGEW .
-  methods GET_BRGEW
-    changing
-      !CV_BRGEW type BRGEW .
-  methods SET_BRGEW
-    importing
-      !IV_BRGEW type BRGEW .
-  methods GET_GEWEI
-    changing
-      !CV_GEWEI type GEWEI .
-  methods SET_GEWEI
-    importing
-      !IV_GEWEI type GEWEI .
-  methods SET_GRUTXT
-    importing
-      !IT_GRUTXT type TLINETAB .
-  methods GET_GRUTXT
-    changing
-      value(CT_GRUTXT) type TLINETAB .
-  methods LESE_MARM
-    importing
-      !IV_MATNR type MATNR .
-  methods SET_LAENG
-    importing
-      !IV_LAENG type LAENG .
-  methods SET_BREIT
-    importing
-      !IV_BREIT type BREIT .
-  methods SET_HOEHE
-    importing
-      !IV_HOEHE type HOEHE .
-  methods SET_MEABM
-    importing
-      !IV_MEABM type MEABM .
-  methods GET_LAENG
-    changing
-      !CV_LAENG type LAENG .
-  methods GET_BREIT
-    changing
-      !CV_BREIT type BREIT .
-  methods GET_HOEHE
-    changing
-      !CV_HOEHE type HOEHE .
-  methods GET_MEABM
-    changing
-      !CV_MEABM type MEABM .
-  methods SET_EKGRP
-    importing
-      !IV_EKGRP type EKGRP .
-  methods GET_EKGRP
-    changing
-      !CV_EKGRP type EKGRP .
-  methods SET_LGRAD
-    importing
-      !IV_LGRAD type LGRAD .
-  methods GET_LGRAD
-    changing
-      !CV_LGRAD type LGRAD .
-  methods SET_EISBE
-    importing
-      !IV_EISBE type EISBE .
-  methods GET_EISBE
-    changing
-      !CV_EISBE type EISBE .
-  methods SET_DISPO
-    importing
-      !IV_DISPO type DISPO .
-  methods GET_DISPO
-    changing
-      !CV_DISPO type DISPO .
-  methods SET_LBKUM
-    importing
-      !IV_LBKUM type LBKUM .
-  methods GET_LBKUM
-    changing
-      !CV_LBKUM type LBKUM .
-  methods SET_SALK3
-    importing
-      !IV_SALK3 type SALK3 .
-  methods GET_SALK3
-    changing
-      !CV_SALK3 type SALK3 .
-  methods SET_STPRS
-    importing
-      !IV_STPRS type STPRS .
-  methods GET_STPRS
-    changing
-      !CV_STPRS type STPRS .
-  methods SET_VERPR
-    importing
-      !IV_VERPR type VERPR .
-  methods GET_VERPR
-    changing
-      !CV_VERPR type VERPR .
-  methods SET_PEINH
-    importing
-      !IV_PEINH type PEINH .
-  methods GET_PEINH
-    changing
-      !CV_PEINH type PEINH .
-  methods SET_PRDHA
-    importing
-      !IV_PRDHA type PRODH_D .
-  methods GET_PRDHA
-    changing
-      !CV_PRDHA type PRODH_D .
-  methods SET_MATKL
-    importing
-      !IV_MATKL type MATKL .
   methods GET_MATKL
     changing
       !CV_MATKL type MATKL .
-  methods SET_WBZ_STD
-    importing
-      !IV_WBZ type ZPSPP_DE_WBZ .
-  methods GET_WBZ_STD
+  methods GET_MATNR
     changing
-      !CV_WZEIT type WZEIT .
-  methods SET_WEBAZ
-    importing
-      !IV_WEBAZ type WEBAZ .
-  methods GET_WEBAZ
+      !CV_MATNR type MATNR .
+  methods GET_MEABM
     changing
-      !CV_WEBAZ type WEBAZ .
-  methods SET_FHORI
-    importing
-      !IV_FHORI type FHORI .
-  methods GET_FHORI
+      !CV_MEABM type MEABM .
+  methods GET_MEINS
     changing
-      !CV_FHORI type FHORI .
+      !CV_MEINS type MEINS .
+  methods GET_MFRPN
+    changing
+      !CV_MFRPN type MFRPN .
+  methods GET_MMSTA
+    changing
+      !CV_MMSTA type MMSTA .
+  methods GET_MSTAE
+    changing
+      !CV_MSTAE type MSTAE .
+  methods GET_MVER
+    changing
+      !CT_MVER type ZACO_TT_MVER .
+  methods GET_NETGW
+    changing
+      !CV_NTGEW type NTGEW .
+  methods GET_NORMT
+    changing
+      !CV_NORMT type NORMT .
+  methods GET_PEINH
+    changing
+      !CV_PEINH type PEINH .
+  methods GET_PLIFZ
+    changing
+      !CV_PLIFZ type PLIFZ .
+  methods GET_PRDHA
+    changing
+      !CV_PRDHA type PRODH_D .
+  methods GET_RUEZT
+    changing
+      !CV_RUEZT type RUEZT .
+  methods GET_SALK3
+    changing
+      !CV_SALK3 type SALK3 .
+  methods GET_STPRS
+    changing
+      !CV_STPRS type STPRS .
+  methods GET_TRANZ
+    changing
+      !CV_TRANZ type TRANZ .
+  methods GET_VERPR
+    changing
+      !CV_VERPR type VERPR .
+  methods GET_VOLEH
+    changing
+      !CV_VOLEH type VOLEH .
+  methods GET_VOLUM
+    changing
+      value(CV_VOLUM) type MARA-VOLUM .
   methods GET_VORGZ
     changing
       !CV_VORGZ type VORGZ .
+  methods GET_WBZ
+    returning
+      value(CV_WZEIT) type WZEIT .
+  methods GET_WBZ_STD
+    changing
+      !CV_WZEIT type WZEIT .
+  methods GET_WEBAZ
+    changing
+      !CV_WEBAZ type WEBAZ .
+  methods GET_WERKS
+    changing
+      !CV_WERKS type WERKS_D .
+  methods GET_WRKST
+    changing
+      !CV_WRKST type WRKST .
+  methods LESE_MARM
+    importing
+      !IV_MATNR type MATNR .
+  methods SET_BAUGRUPPE
+    importing
+      !IV_SOBSL type SOBSL .
+  methods SET_BEARZ
+    importing
+      !IV_BEARZ type BEARZ .
+  methods SET_BESKZ
+    importing
+      !IV_BESKZ type BESKZ .
+  methods SET_BREIT
+    importing
+      !IV_BREIT type BREIT .
+  methods SET_BRGEW
+    importing
+      !IV_BRGEW type BRGEW .
+  methods SET_DISPO
+    importing
+      !IV_DISPO type DISPO .
+  methods SET_DISPOMERKMAL
+    importing
+      !IV_DISMM type DISMM .
+  methods SET_EISBE
+    importing
+      !IV_EISBE type EISBE .
+  methods SET_EKGRP
+    importing
+      !IV_EKGRP type EKGRP .
+  methods SET_FHORI
+    importing
+      !IV_FHORI type FHORI .
+  methods SET_GEWEI
+    importing
+      !IV_GEWEI type GEWEI .
+  methods SET_GROES
+    importing
+      !IV_GROES type GROES .
+  methods SET_GRUTXT
+    importing
+      !IT_GRUTXT type TLINETAB .
+  methods SET_HOEHE
+    importing
+      !IV_HOEHE type HOEHE .
+  methods SET_KTXT
+    importing
+      !IV_MAKTX type MAKTX .
   methods SET_LABST
     importing
       !IV_LABST type LABST .
-  methods GET_LABST
-    changing
-      !CV_LABST type LABST .
+  methods SET_LAENG
+    importing
+      !IV_LAENG type LAENG .
+  methods SET_LBKUM
+    importing
+      !IV_LBKUM type LBKUM .
+  methods SET_LGRAD
+    importing
+      !IV_LGRAD type LGRAD .
   methods SET_MAKT
     importing
       !IT_MAKT type MAKT_TAB .
-  methods GET_MAKT
-    changing
-      !CT_MAKT type MAKT_TAB .
+  methods SET_MATKL
+    importing
+      !IV_MATKL type MATKL .
+  methods SET_MATNR
+    importing
+      !IV_MATNR type MATNR
+      !IV_WERKS type WERKS_D .
+  methods SET_MEABM
+    importing
+      !IV_MEABM type MEABM .
+  methods SET_MEINS
+    importing
+      !IV_MEINS type MEINS .
+  methods SET_MFRPN
+    importing
+      !IV_MFRPN type MFRPN .
+  methods SET_MMSTA
+    importing
+      !IV_MMSTA type MMSTA .
+  methods SET_MSTAE
+    importing
+      !IV_MSTAE type MSTAE .
+  methods SET_NORMT
+    importing
+      !IV_NORMT type NORMT .
+  methods SET_NTGEW
+    importing
+      !IV_NTGEW type NTGEW .
+  methods SET_PEINH
+    importing
+      !IV_PEINH type PEINH .
+  methods SET_PLIFZ
+    importing
+      !IV_PLIFZ type PLIFZ .
+  methods SET_PRDHA
+    importing
+      !IV_PRDHA type PRODH_D .
+  methods SET_RUEZT
+    importing
+      !IV_RUEZT type RUEZT .
+  methods SET_SALK3
+    importing
+      !IV_SALK3 type SALK3 .
+  methods SET_STPRS
+    importing
+      !IV_STPRS type STPRS .
+  methods SET_TRANZ
+    importing
+      !IV_TRANZ type TRANZ .
+  methods SET_VERPR
+    importing
+      !IV_VERPR type VERPR .
+  methods SET_VOLEH
+    importing
+      !IV_VOLEH type VOLEH .
+  methods SET_VOLUM
+    importing
+      !IV_VOLUM type MARA-VOLUM .
+  methods SET_WBZ
+    importing
+      !IV_WZEIT type WZEIT .
+  methods SET_WBZ_STD
+    importing
+      !IV_WBZ type ZACO_DE_WBZ .
+  methods SET_WEBAZ
+    importing
+      !IV_WEBAZ type WEBAZ .
+  methods SET_WERKS
+    importing
+      !IV_WERKS type WERKS_D .
+  methods SET_WRKST
+    importing
+      !IV_WRKST type WRKST .
   protected section.
 private section.
 
@@ -341,16 +341,16 @@ private section.
   data GV_VORGZ type VORGZ .
   data GT_MAKT type MAKT_TAB .
 
-  methods LESE_MATERIAL
-    importing
-      !IV_MATNR type MATNR
-      !IV_WERKS type WERKS_D .
   methods COLLECT_LABST
     importing
       !IV_MATNR type MATNR
       !IV_WERKS type WERKS_D
     returning
       value(CV_LABST) type LABST .
+  methods LESE_MATERIAL
+    importing
+      !IV_MATNR type MATNR
+      !IV_WERKS type WERKS_D .
 ENDCLASS.
 
 
@@ -903,7 +903,7 @@ ENDMETHOD.
     DATA: lv_peinh TYPE peinh.
     DATA: lv_matkl TYPE matkl.
     DATA: lv_prdha TYPE prodh_d.
-    DATA: lv_wbz   TYPE zpspp_de_wbz.
+    DATA: lv_wbz   TYPE zaco_de_wbz.
     DATA: lv_webaz TYPE webaz.
     DATA: lv_fhori TYPE fhori.
     DATA: lv_labst_sum TYPE labst.

@@ -321,7 +321,7 @@ METHOD GET_EXTERNAL_SYSTEM.
       lv_json = lo_http_client->response->get_cdata( ).
 
 *------------ Lv_json deserialisieren und equipmentId filtern   ----------------*
-      CALL METHOD zpsain_cl_json=>json_to_data
+      CALL METHOD zaco_cl_json=>json_to_data
         EXPORTING
           iv_json = lv_json
         CHANGING

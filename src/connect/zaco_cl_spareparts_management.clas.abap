@@ -159,7 +159,7 @@ METHOD DELETE_SPAREPART_ASSIGNMENT.
   DATA: lo_http_client TYPE REF TO if_http_client.
   DATA: lo_sparepart   TYPE REF TO zaco_cl_spareparts.
   DATA: lo_stueli_pos  TYPE REF TO zaco_cl_equip_erp_stueli_pos.
-  DATA: lo_material    TYPE REF TO zpspp_util_cl_material.
+  DATA: lo_material    TYPE REF TO zaco_cl_material.
 
   DATA: lt_json   TYPE zaco_t_json_body.
   DATA: lt_stueli TYPE zaco_tt_equi_stueli_pos.
@@ -247,7 +247,7 @@ METHOD DELETE_SPAREPART_ASSIGNMENT.
   ENDIF.
 
   lv_json = lo_http_client->response->get_cdata( ).
-  CALL METHOD zpsain_cl_json=>json_to_data
+  CALL METHOD zaco_cl_json=>json_to_data
     EXPORTING
       iv_json = lv_json
     CHANGING
@@ -631,7 +631,7 @@ METHOD HANDLE_SPAREPART_OF_EQUIPMENT.
           gs_msg-msgno = '114'.  "Konnte erfolgreich übertragen werden
           gs_msg-msgv1 = lv_matnr.
           gs_msg-msgv2 = iv_equnr.
-          CALL METHOD zpsain_cl_logs=>add_log_entry
+          CALL METHOD zaco_cl_logs=>add_log_entry
             EXPORTING
               is_msg     = gs_msg
               iv_loghndl = cv_loghndl.

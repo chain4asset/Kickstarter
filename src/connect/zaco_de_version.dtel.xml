@@ -15,7 +15,9 @@
     <SCRTEXT_S>Version</SCRTEXT_S>
     <SCRTEXT_M>Versionsname</SCRTEXT_M>
     <SCRTEXT_L>Versionsname</SCRTEXT_L>
+    <ACTFLAG>I</ACTFLAG>
     <DTELMASTER>D</DTELMASTER>
+    <RESERVEDTE>JB</RESERVEDTE>
     <REFKIND>D</REFKIND>
    </DD04V>
   </asx:values>

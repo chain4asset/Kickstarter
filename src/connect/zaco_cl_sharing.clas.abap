@@ -6,7 +6,7 @@ public section.
 
   methods GET_GROUP_BY_NAME
     importing
-      !IV_NAME type ZCHAIN_DE_AUTH_GROUP
+      !IV_NAME type CHAR20
       !IV_RFCDEST type RFCDEST
     changing
       !CV_GROUP_ID type STRING
@@ -122,7 +122,7 @@ CLASS ZACO_CL_SHARING IMPLEMENTATION.
     gs_msg-msgno = '142'.  "HTTP Fehler bei Übertragung
     gs_msg-msgv1 = iv_name.
     gs_msg-msgv2 = lv_status_code.
-    CALL METHOD zpsain_cl_logs=>add_log_entry
+    CALL METHOD zaco_cl_logs=>add_log_entry
       EXPORTING
         is_msg     = gs_msg
         iv_loghndl = cv_loghndl.
@@ -134,7 +134,7 @@ CLASS ZACO_CL_SHARING IMPLEMENTATION.
     gs_msg-msgno = '143'.  "Konnte erfolgreich übertragen werden
     gs_msg-msgv1 = iv_name.
     gs_msg-msgv2 = lv_status_code.
-    CALL METHOD zpsain_cl_logs=>add_log_entry
+    CALL METHOD zaco_cl_logs=>add_log_entry
       EXPORTING
         is_msg     = gs_msg
         iv_loghndl = cv_loghndl.

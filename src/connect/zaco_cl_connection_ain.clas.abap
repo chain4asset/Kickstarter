@@ -21,12 +21,12 @@ public section.
       !CO_HTTP_CLIENT type ref to IF_HTTP_CLIENT .
   class-methods CONSTRUCT_BODY
     importing
-      !IT_BODY type ZPSAIN_T_JSON_BODY
+      !IT_BODY type ZACO_T_JSON_BODY
     changing
       !CV_BODY type STRING .
   class-methods CONSTRUCT_BODY_HIER
     importing
-      !IT_BODY type ZPSAIN_T_JSON_BODY
+      !IT_BODY type ZACO_T_JSON_BODY
     changing
       !CV_BODY type STRING .
   class-methods BODY_RECURSIVE
@@ -37,13 +37,13 @@ public section.
       !CV_BODY type STRING .
   class-methods CONSTRUCT_BODY_PROD_DATEN
     importing
-      !IT_JSON type ZPSAIN_T_JSON_BODY
+      !IT_JSON type ZACO_T_JSON_BODY
       !IV_TEMPLATE_ID type STRING
     changing
       !LV_BODY type STRING .
   class-methods CONSTRUCT_BODY_MAT_LANGU
     importing
-      !IT_BODY type ZPSAIN_T_JSON_BODY
+      !IT_BODY type ZACO_T_JSON_BODY
     changing
       !CV_BODY type STRING .
   class-methods CREATE_TOKEN
@@ -111,7 +111,7 @@ METHOD BODY_RECURSIVE.
     ENDIF.
 *---------- Auflösung rekursiv Stufe 1 - x
     lv_stufe = iv_stufe + 1.
-    CALL METHOD zpsain_cl_connection=>body_recursive
+    CALL METHOD zaco_cl_connection_ain=>body_recursive
       EXPORTING
         it_body  = it_body
         iv_stufe = lv_stufe
@@ -148,7 +148,7 @@ METHOD connect_to_ain.
   DATA: lo_a2c_client TYPE REF TO if_oauth2_client.
   DATA: lx_oa2c       TYPE REF TO cx_oa2c.
 
-  DATA: ls_tenant         TYPE zpsain_tenant_sy.
+  DATA: ls_tenant         TYPE zaco_tenant_sy.
 
   DATA: lv_rfcdest        TYPE rfcdest.
   DATA: lv_profile        TYPE oa2c_profile.
@@ -216,7 +216,7 @@ METHOD CONSTRUCT_BODY.
 
   DATA: lt_parent TYPE STANDARD TABLE OF ltt_parent.
   DATA: ls_parent TYPE ltt_parent.
-  DATA: ls_body TYPE zpsain_s_json_body.
+  DATA: ls_body TYPE zaco_s_json_body.
   DATA: lv_body_end TYPE string.
   DATA: lv_body_temp TYPE string.
   DATA: lv_name_end TYPE string.
@@ -230,7 +230,7 @@ METHOD CONSTRUCT_BODY.
   DATA: lv_ohne_parent TYPE i.
   DATA: lv_count TYPE i.
   DATA: lv_multiple_change TYPE char1.
-  DATA: lv_parent TYPE zpszx_de_string.
+  DATA: lv_parent TYPE zaco_de_string.
 
   cv_body = |\{|.
   lv_body_end = |\}|.
@@ -318,7 +318,7 @@ ENDMETHOD.
 
 method CONSTRUCT_BODY_HIER.
 
-  data: ls_body type zpsain_s_json_body.
+  data: ls_body type zaco_s_json_body.
 
   data: lv_begin type string.
   data: lv_end type string.
@@ -335,7 +335,7 @@ method CONSTRUCT_BODY_HIER.
     concatenate cv_body '"' ls_body-name '": "' ls_body-value '",' into cv_body.
 *---------- Auflösung rekursiv Stufe 1 - x
     lv_stufe = 1.
-    CALL METHOD ZPSAIN_CL_CONNECTION=>BODY_RECURSIVE
+    CALL METHOD ZACO_CL_CONNECTION_AIN=>BODY_RECURSIVE
       EXPORTING
         IT_BODY  = it_body
         IV_STUFE = lv_stufe
@@ -358,7 +358,7 @@ METHOD CONSTRUCT_BODY_MAT_LANGU.
 
   DATA: lt_parent TYPE STANDARD TABLE OF ltt_parent.
   DATA: ls_parent TYPE ltt_parent.
-  DATA: ls_body TYPE zpsain_s_json_body.
+  DATA: ls_body TYPE zaco_s_json_body.
   DATA: lv_body_end TYPE string.
   DATA: lv_body_temp TYPE string.
   DATA: lv_name_end TYPE string.
@@ -372,7 +372,7 @@ METHOD CONSTRUCT_BODY_MAT_LANGU.
   DATA: lv_ohne_parent TYPE i.
   DATA: lv_count TYPE i.
   DATA: lv_multiple_change TYPE char1.
-  DATA: lv_parent TYPE zpszx_de_string.
+  DATA: lv_parent TYPE zaco_de_string.
 
   cv_body = |\{|.
   lv_body_end = |\}|.
@@ -468,11 +468,11 @@ ENDMETHOD.
 
 METHOD CONSTRUCT_BODY_PROD_DATEN.
 
-  DATA: lt_json_group TYPE zpsain_t_json_body.
-  DATA: lt_json_attrid  TYPE zpsain_t_json_body.
-  DATA: lt_json_attrid_v  TYPE zpsain_t_json_body.
+  DATA: lt_json_group TYPE zaco_t_json_body.
+  DATA: lt_json_attrid  TYPE zaco_t_json_body.
+  DATA: lt_json_attrid_v  TYPE zaco_t_json_body.
 
-  DATA: ls_json TYPE zpsain_s_json_body.
+  DATA: ls_json TYPE zaco_s_json_body.
 
   DATA: lv_group_id_old TYPE string.
   DATA: lv_attr_id_old TYPE string.

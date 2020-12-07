@@ -4,6 +4,7 @@
   <asx:values>
    <PROGDIR>
     <NAME>LZACO_AIN_CONVIEWTOP</NAME>
+    <STATE>A</STATE>
     <DBAPL>S</DBAPL>
     <DBNA>D$</DBNA>
     <SUBC>I</SUBC>

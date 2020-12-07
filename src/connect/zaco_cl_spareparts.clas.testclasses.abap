@@ -32,7 +32,7 @@ CLASS zpsain_cl_test_spareparts DEFINITION FOR TESTING
   PRIVATE SECTION.
 * ================
     DATA:
-      f_cut TYPE REF TO zpsain_cl_spareparts.  "class under test
+      f_cut TYPE REF TO zaco_cl_spareparts.  "class under test
 
     CLASS-METHODS: class_setup.
     CLASS-METHODS: class_teardown.
@@ -68,11 +68,11 @@ CLASS zpsain_cl_test_spareparts IMPLEMENTATION.
 * =============
 
     DATA: lo_http_client TYPE REF TO if_http_client.
-    DATA: lo_connect TYPE REF TO zpsain_cl_connection.
+    DATA: lo_connect TYPE REF TO zaco_cl_connection_ain.
 
     CREATE OBJECT lo_connect.
 
-    CALL METHOD zpsain_cl_connection=>connect_to_ain
+    CALL METHOD zaco_cl_connection_ain=>connect_to_ain
       EXPORTING
         iv_rfcdest               = 'AIN_TEST'
       CHANGING

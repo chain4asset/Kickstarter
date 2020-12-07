@@ -19,6 +19,7 @@
     <TABART>APPL2</TABART>
     <PROTOKOLL>X</PROTOKOLL>
     <BUFALLOW>N</BUFALLOW>
+    <ROWORCOLST>C</ROWORCOLST>
    </DD09L>
    <DD03P_TABLE>
     <DD03P>
@@ -29,6 +30,7 @@
      <ROLLNAME>MANDT</ROLLNAME>
      <ADMINFIELD>0</ADMINFIELD>
      <NOTNULL>X</NOTNULL>
+     <RESERVEDTE>D</RESERVEDTE>
      <COMPTYPE>E</COMPTYPE>
     </DD03P>
     <DD03P>
@@ -59,12 +61,6 @@
      <COMPTYPE>E</COMPTYPE>
     </DD03P>
    </DD03P_TABLE>
-   <TABL_EXTRAS>
-    <TDDAT>
-     <TABNAME>ZACO_BUSI_PAR</TABNAME>
-     <CCLASS>&amp;NC&amp;</CCLASS>
-    </TDDAT>
-   </TABL_EXTRAS>
   </asx:values>
  </asx:abap>
 </abapGit>

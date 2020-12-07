@@ -184,13 +184,13 @@ private section.
     importing
       !IO_EQUIPMENT type ref to ZACO_CL_EQUIP_ERP
     changing
-      value(CV_TYPE) type ZNTYP .
+      value(CV_TYPE) type TYPBZ .
   methods CREATE_LOG_HANDLE
     changing
       !CV_LOGHNDL type BALLOGHNDL .
   methods GET_EQUIPMENT_TEMPLATE_ID
     importing
-      !IO_EQUIPMENT type ref to ZPSPP_CL_EQUIPMENT
+      !IO_EQUIPMENT type ref to ZACO_CL_EQUIP_ERP
     changing
       !CV_TEMPL_ID type STRING
       !CV_LOGHNDL type BALLOGHNDL .
@@ -554,7 +554,7 @@ endmethod.
 
 method ATTRIBUTE_UOM1.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
 
   ls_json-name = 'uom1'.
   if iv_attribute_UOM1 ne space.
@@ -838,7 +838,7 @@ METHOD create_equipment.
   DATA: ls_result       TYPE zaco_s_json_body.
 
   DATA: lv_typbz        TYPE typbz.
-  DATA: lv_nps_type     TYPE zntyp.
+*  DATA: lv_nps_type     TYPE zntyp.
   DATA: lv_ok           TYPE boolean.
   DATA: lv_modelname    TYPE zaco_de_modelname.
   DATA: lv_modelid      TYPE string.              "AIN Modell Id
@@ -1050,10 +1050,10 @@ METHOD data_gathering.
   DATA: lo_http_client  TYPE REF TO if_http_client.
   DATA: lo_business_pa  TYPE REF TO zaco_cl_business_partner_ain.
 
-  DATA: lt_json         TYPE zpsain_t_json_body.
+  DATA: lt_json         TYPE zaco_t_json_body.
 
   DATA: lv_typbz        TYPE typbz.
-  DATA: lv_nps_type     TYPE zntyp.
+*  DATA: lv_nps_type     TYPE zntyp.
   DATA: lv_ok           TYPE boolean.
   DATA: lv_modelname    TYPE zaco_de_modelname.
   DATA: lv_modelid      TYPE string.              "AIN Modell Id
@@ -1091,7 +1091,7 @@ METHOD data_gathering.
     gs_msg-msgty = 'E'.
     gs_msg-msgid = 'ZACO'.
     gs_msg-msgno = '102'.  "Verbindung zu AIN System fehlgeschlagen.
-    CALL METHOD zpsain_cl_logs=>add_log_entry
+    CALL METHOD zaco_cl_logs=>add_log_entry
       EXPORTING
         is_msg     = gs_msg
         iv_loghndl = cv_loghndl.
@@ -1115,7 +1115,7 @@ METHOD data_gathering.
     EXPORTING
       io_equipment = io_equipment
     CHANGING
-      cv_type      = lv_nps_type.
+      cv_type      = lv_typbz.
 *----------- Typenbezeichnung
   CALL METHOD me->technische_id
     EXPORTING
@@ -1476,7 +1476,7 @@ ENDMETHOD.
 
 method EQUIPMENT_TEMPLATE_ID.
 
-  data: ls_json  type zpsain_s_json_body.
+  data: ls_json  type zaco_s_json_body.
 
   ls_json-name = 'id'.
   ls_json-value = iv_template_id.

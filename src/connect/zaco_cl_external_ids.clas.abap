@@ -48,9 +48,9 @@ private section.
       !CT_JSON type ZACO_T_JSON_BODY .
   methods IS_PRIMARY
     importing
-      !IV_IS_PRIMARY type ZPSAIN_D_EXTERNAL_PRIMARY
+      !IV_IS_PRIMARY type ZACO_D_EXTERNAL_PRIMARY
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods EXTERNAL_OBJECT_TYPE
     importing
       !IV_OBJECT_TYPE type ZACO_D_EXTERNAL_ID_TYPE
@@ -112,7 +112,7 @@ ENDMETHOD.
 
 METHOD OBJECT_ID.
 
-  DATA: ls_json TYPE zpsain_s_json_body.
+  DATA: ls_json TYPE zaco_s_json_body.
 
   ls_json-name = 'AINObjectID'.
   ls_json-value = iv_object_id.
@@ -169,7 +169,7 @@ METHOD set_external_ids.
     gs_msg-msgty = 'E'.
     gs_msg-msgid = 'ZACO'.
     gs_msg-msgno = '102'.  "Verbindung zu AIN System fehlgeschlagen.
-    CALL METHOD zpsain_cl_logs=>add_log_entry
+    CALL METHOD zaco_cl_logs=>add_log_entry
       EXPORTING
         is_msg     = gs_msg
         iv_loghndl = cv_loghndl.

@@ -47,9 +47,9 @@ private section.
       !CT_JSON type ZACO_T_JSON_BODY .
   methods EANNUMBER
     importing
-      !IO_MATERIAL type ref to ZPSPP_UTIL_CL_MATERIAL
+      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods UOM
     importing
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
@@ -74,24 +74,24 @@ private section.
       !CT_JSON type ZACO_T_JSON_BODY .
   methods LONGDESCRIPTION
     importing
-      !IO_MATERIAL type ref to ZPSPP_UTIL_CL_MATERIAL
+      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods SPAREPARTNAME
     importing
-      !IO_MATERIAL type ref to ZPSPP_UTIL_CL_MATERIAL
+      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods SPAREPARTDESCRIPTION
     importing
-      !IO_MATERIAL type ref to ZPSPP_UTIL_CL_MATERIAL
+      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods SUBCLASS
     importing
-      !IO_MATERIAL type ref to ZPSPP_UTIL_CL_MATERIAL
+      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods DIMENSION
     importing
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
@@ -117,7 +117,7 @@ private section.
     importing
       !IV_ID type STRING
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods INTERNALID
     importing
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
@@ -562,7 +562,7 @@ ENDMETHOD.
 
 method EANNUMBER.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
   data: ls_marm type marm.
 
   data: lv_ean type ean11.
@@ -637,7 +637,7 @@ ENDMETHOD.
 
 method ID.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
   data: lv_meins type mara-meins.
 
   ls_json-name = 'id'.
@@ -728,7 +728,7 @@ method LONGDESCRIPTION.
 *
 *  data: ls_tline type tline.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
 *  data: lv_text type string.
   data: lv_maktx type maktx.
   data: lv_normt type normt.
@@ -827,7 +827,7 @@ endmethod.
 
 method SPAREPARTDESCRIPTION.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
   data: lv_maktx type maktx.
   data: lv_normt type normt.
   data: lv_wrkst type wrkst.
@@ -908,7 +908,7 @@ ENDMETHOD.
 
 method SPAREPARTNAME.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
   data: lv_maktx type maktx.
   data: lv_normt type normt.
   data: lv_wrkst type wrkst.
@@ -933,7 +933,7 @@ endmethod.
 
 method SPAREPARTS.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
   data: lv_meins type mara-meins.
 
   ls_json-name = 'spareparts'.
@@ -1032,7 +1032,7 @@ ENDMETHOD.
 
 method SUBCLASS.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
   ls_json-name = 'subClass'.
   ls_json-value = 'C72A865B6302447FA109D97AAFDA05DE'.   "'A43F6328772B43D183345AF1FB7A0B96'.
   append ls_json to ct_json.

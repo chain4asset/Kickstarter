@@ -9,7 +9,7 @@ public section.
     importing
       !IV_JSON type STRING
     changing
-      !CT_DATA type ZPSAIN_T_JSON_BODY .
+      !CT_DATA type ZACO_T_JSON_BODY .
 protected section.
 private section.
 ENDCLASS.
@@ -21,7 +21,7 @@ CLASS ZACO_CL_JSON IMPLEMENTATION.
 
 method JSON_TO_DATA.
 
-  data: ls_data type zpsain_s_json_body.
+  data: ls_data type zaco_s_json_body.
   data: lv_work type String.
   data: lv_name type string.
   data: lv_value type string.
