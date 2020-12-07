@@ -95,9 +95,16 @@
     </item>
     <item>
      <ID>S</ID>
-     <KEY>PRFCDEST</KEY>
+     <KEY>PBUSPA</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>9</LENGTH>
+     <SPLIT>D</SPLIT>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>PRFCDEST</KEY>
+     <ENTRY>.</ENTRY>
+     <LENGTH>23</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
@@ -105,13 +112,6 @@
      <KEY>SEQUNR</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>17</LENGTH>
-     <SPLIT>D</SPLIT>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>SWERKS</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>12</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
    </TPOOL>

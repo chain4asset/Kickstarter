@@ -6,7 +6,7 @@ public section.
 
   methods GET_GROUP_BY_NAME
     importing
-      !IV_NAME type STRING
+      !IV_NAME type ZCHAIN_DE_AUTH_GROUP
       !IV_RFCDEST type RFCDEST
     changing
       !CV_GROUP_ID type STRING
@@ -314,7 +314,7 @@ CLASS ZACO_CL_SHARING IMPLEMENTATION.
     APPEND ls_json TO ct_json.
 
     ls_json-name = 'accessPrivilege'.
-    ls_json-value = is_sharing-acess_priv.
+    ls_json-value = is_sharing-access_priv.
     APPEND ls_json TO ct_json.
 
     ls_json-name = 'operation'.

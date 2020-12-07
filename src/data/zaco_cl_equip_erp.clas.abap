@@ -324,8 +324,6 @@ METHOD lese_equipment.
 *
 *---------------------------------------------------------------------------*
 
-  DATA: lo_badi_equip TYPE REF TO zaco_ain_data_equipment_erp.
-
   DATA: ls_equi TYPE equi.
   DATA: ls_eqbs TYPE eqbs.
 
@@ -503,12 +501,6 @@ METHOD lese_equipment.
     cv_ok = 'X'.
 
   ENDIF.
-*---------------------- Exit einfügen ---------------------------*
-
-  GET BADI lo_badi_equip FILTERS zaco_werk = gv_werk.
-  CALL BADI lo_badi_equip->enhance_euqipment
-    EXPORTING
-      io_equipment = me.
 
 ENDMETHOD.
 
