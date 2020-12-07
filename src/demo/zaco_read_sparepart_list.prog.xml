@@ -90,8 +90,8 @@
     </item>
     <item>
      <ID>R</ID>
-     <ENTRY>ACONN Intiales Laden der Equipments</ENTRY>
-     <LENGTH>35</LENGTH>
+     <ENTRY>ACONN lesen Ersatzteilstückiste eines Equipments</ENTRY>
+     <LENGTH>48</LENGTH>
     </item>
     <item>
      <ID>S</ID>

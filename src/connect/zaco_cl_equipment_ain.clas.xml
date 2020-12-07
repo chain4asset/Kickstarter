@@ -4,15 +4,39 @@
   <asx:values>
    <VSEOCLASS>
     <CLSNAME>ZACO_CL_EQUIPMENT_AIN</CLSNAME>
-    <VERSION>1</VERSION>
     <LANGU>D</LANGU>
     <DESCRIPT>ACONN AIN Equipment Klasse</DESCRIPT>
-    <EXPOSURE>2</EXPOSURE>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
    </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>002</KEY>
+     <ENTRY>Für Equipment konnte kein Modell ermittelt werden.</ENTRY>
+     <LENGTH>50</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>003</KEY>
+     <ENTRY>Für Equipment konnte kein AIN Modell Id ermittelt werden.</ENTRY>
+     <LENGTH>57</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>004</KEY>
+     <ENTRY>Für Equipment konnte keine AIN Equipment Template Id ermittelt werden.</ENTRY>
+     <LENGTH>70</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>005</KEY>
+     <ENTRY>Ein unbekannter Fehler trat bei Equipment auf.</ENTRY>
+     <LENGTH>49</LENGTH>
+    </item>
+   </TPOOL>
    <DESCRIPTIONS>
     <SEOCOMPOTX>
      <CLSNAME>ZACO_CL_EQUIPMENT_AIN</CLSNAME>

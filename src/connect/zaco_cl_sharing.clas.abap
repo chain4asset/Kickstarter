@@ -6,7 +6,7 @@ public section.
 
   methods GET_GROUP_BY_NAME
     importing
-      !IV_NAME type CHAR20
+      !IV_NAME type ZACO_DE_AUTH_GROUP
       !IV_RFCDEST type RFCDEST
     changing
       !CV_GROUP_ID type STRING
