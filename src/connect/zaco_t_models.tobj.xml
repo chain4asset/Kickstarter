@@ -26,6 +26,10 @@
     </OBJS>
    </OBJS>
    <TOBJ>
+    <TDDAT>
+     <TABNAME>ZACO_T_MODEL</TABNAME>
+     <CCLASS>&amp;NC&amp;</CCLASS>
+    </TDDAT>
     <TVDIR>
      <TABNAME>ZACO_T_MODEL</TABNAME>
      <AREA>ZACO_AIN_CONVIEW</AREA>

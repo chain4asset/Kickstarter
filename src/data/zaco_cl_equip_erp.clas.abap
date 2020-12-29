@@ -249,7 +249,7 @@ METHOD GET_PPOSNR.
 ENDMETHOD.
 
 
-METHOD GET_SERNR.
+METHOD get_sernr.
 
   cv_sernr = gv_sernr.
   IF cv_sernr(1) = 'X' AND cv_sernr+1(1) = '4'.
@@ -258,7 +258,7 @@ METHOD GET_SERNR.
   IF cv_sernr(1) = 'X'.
     SHIFT cv_sernr LEFT DELETING LEADING 'X'.
   ENDIF.
-
+  SHIFT cv_sernr LEFT DELETING LEADING '0'.
 ENDMETHOD.
 
 
