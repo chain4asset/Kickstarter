@@ -425,7 +425,8 @@ METHOD HANDLE_SPAREPART_OF_EQUIPMENT.
       CHANGING
         cv_erskz = lv_erskz.
 *------- Nur Ersatzteile
-    IF lv_erskz = 'X' OR lv_erskz = 'E'.
+*    IF lv_erskz = 'X' OR lv_erskz = 'E'.
+    IF lv_erskz <> space.
       CALL METHOD zaco_cl_connection_ain=>connect_to_ain
         EXPORTING
           iv_rfcdest     = iv_rfcdest
