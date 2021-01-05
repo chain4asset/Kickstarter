@@ -134,27 +134,20 @@ ENDMETHOD.
 
 METHOD set_external_ids.
 
-  DATA: lo_http_client TYPE REF TO if_http_client.
+  DATA: lo_http_client  TYPE REF TO if_http_client.
 
-  DATA: lt_json TYPE zaco_t_json_body.
+  DATA: lt_json         TYPE zaco_t_json_body.
 
-  DATA: ls_ext_ids TYPE zaco_s_external_id.
+  DATA: ls_ext_ids      TYPE zaco_s_external_id.
 
-  DATA: lv_zaehl TYPE sy-tfill.
-  DATA: lv_body  TYPE string.
+  DATA: lv_equnr        TYPE equnr.    "log
+  DATA: lv_zaehl        TYPE sy-tfill.
+  DATA: lv_body         TYPE string.
   DATA: lv_service      TYPE string.
   DATA: lv_status_code  TYPE i.
   DATA: lv_reason       TYPE string.
   DATA: lv_json         TYPE string.
 
-  IF cv_loghndl IS INITIAL.
-    CALL METHOD zaco_cl_logs=>create_log_handler
-      EXPORTING
-        is_log     = gs_log
-        iv_objekt  = 'EQUI'
-      CHANGING
-        cv_loghndl = cv_loghndl.
-  ENDIF.
   CALL METHOD zaco_cl_connection_ain=>connect_to_ain
     EXPORTING
       iv_rfcdest               = iv_rfcdest
@@ -164,16 +157,54 @@ METHOD set_external_ids.
       dest_not_found           = 1
       destination_no_authority = 2
       OTHERS                   = 3.
-  IF sy-subrc <> 0.
-**message i102(ZPSAIN)
-    gs_msg-msgty = 'E'.
-    gs_msg-msgid = 'ZACO'.
-    gs_msg-msgno = '102'.  "Verbindung zu AIN System fehlgeschlagen.
-    CALL METHOD zaco_cl_logs=>add_log_entry
-      EXPORTING
-        is_msg     = gs_msg
-        iv_loghndl = cv_loghndl.
-  ENDIF.
+  CASE sy-subrc.
+    WHEN '1'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '001'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '2'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '002'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '3'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '003'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+
+  ENDCASE.
 
   CALL METHOD me->object_type
     EXPORTING
@@ -252,6 +283,38 @@ METHOD set_external_ids.
                                                     reason = lv_reason ).
 
     lv_json = lo_http_client->response->get_cdata( ).
+    IF lv_status_code = '200'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'S'.
+      gs_msg-msgno = '301'.
+      gs_msg-msgv1 = iv_object_id.
+      lv_json  = lv_json.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'EQUI'.
+    ELSE.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '302'.
+      gs_msg-msgv1 = iv_object_id.
+      lv_json  = lv_json.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'EQUI'.
+
+    ENDIF.
     CALL METHOD zaco_cl_json=>json_to_data
       EXPORTING
         iv_json = lv_json

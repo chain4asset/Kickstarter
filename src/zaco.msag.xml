@@ -12,7 +12,19 @@
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
      <MSGNR>001</MSGNR>
-     <TEXT>RFC Destination falsch.</TEXT>
+     <TEXT>RFC Destination &amp;1 falsch.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>Keine Berechtigung für Destination &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>Problem mit Destination &amp;1 aufgetreten.</TEXT>
     </T100>
     <T100>
      <SPRSL>D</SPRSL>
@@ -263,13 +275,13 @@
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
      <MSGNR>140</MSGNR>
-     <TEXT>Lean Equipment Massenveröffentlichung schlug fehl.</TEXT>
+     <TEXT>Lean Equipment &amp;1 Massenveröffentlichung schlug fehl.</TEXT>
     </T100>
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
      <MSGNR>141</MSGNR>
-     <TEXT>Lean Equipment Massenveröffentlichung erfolgreich.</TEXT>
+     <TEXT>Lean Equipment &amp;1 Massenveröffentlichung erfolgreich.</TEXT>
     </T100>
     <T100>
      <SPRSL>D</SPRSL>
@@ -294,6 +306,18 @@
      <ARBGB>ZACO</ARBGB>
      <MSGNR>145</MSGNR>
      <TEXT>In Bearbeitung setzen war für Equipment &amp;1 erfolgreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>146</MSGNR>
+     <TEXT>Equipment &amp;1 Veröffentlichung schlug fehl.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>147</MSGNR>
+     <TEXT>Equipment &amp;1 Veröffentlichung war erfolgreich.</TEXT>
     </T100>
     <T100>
      <SPRSL>D</SPRSL>
@@ -336,6 +360,108 @@
      <ARBGB>ZACO</ARBGB>
      <MSGNR>155</MSGNR>
      <TEXT>An Equipment &amp;1 wurde bereits ein Produktdatenblatt geladen.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>200</MSGNR>
+     <TEXT>*---------- Business Partner</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>201</MSGNR>
+     <TEXT>Für Kunde &amp;1 kein AIN Business Partner geplegt.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>202</MSGNR>
+     <TEXT>Kunde &amp;1 konnte in AIN unter Rolle &apos;Operator&apos; nicht gefunden werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>300</MSGNR>
+     <TEXT>*------------ Equipment Part II</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>301</MSGNR>
+     <TEXT>Setzen Externe ID für Objekt &amp;1 war erfoglreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>302</MSGNR>
+     <TEXT>Setzen Externe ID für Objekt &amp;1 war nicht erfoglreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>303</MSGNR>
+     <TEXT>Zuordnung Material &amp;1 zu Equipment &amp;2 erfolgreich gelöscht.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>304</MSGNR>
+     <TEXT>Equipment &amp;1 hat keine Stückliste.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>400</MSGNR>
+     <TEXT>*-------------------- Material</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>401</MSGNR>
+     <TEXT>AIN Mengeneinheit für &amp;1 konnte nicht ermittelt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>402</MSGNR>
+     <TEXT>Material &amp;1 konnte nicht angelegt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>403</MSGNR>
+     <TEXT>Material &amp;1 konnte nicht gelöscht werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>404</MSGNR>
+     <TEXT>AIN Anfrage für Material schlug fehl.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>405</MSGNR>
+     <TEXT>Update für Material &amp;1 schlug fehl.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>406</MSGNR>
+     <TEXT>Update für Material &amp;1 war erfolgreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>407</MSGNR>
+     <TEXT>Anlegen von Material &amp;1 war erfolgreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>500</MSGNR>
+     <TEXT>*--------- Dokumente</TEXT>
     </T100>
     <T100>
      <SPRSL>D</SPRSL>

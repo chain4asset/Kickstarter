@@ -49,6 +49,7 @@ SELECT-OPTIONS: sequnr FOR equi-equnr.
 PARAMETERS: pwerks   TYPE werks_d.
 PARAMETERS: pstlty   TYPE stlty.
 PARAMETERS: pstlan   TYPE stlan.
+PARAMETERS: pbpname  TYPE zaco_de_bp_ain.
 PARAMETERS: prfcdest TYPE rfcdest.
 
 
@@ -159,6 +160,7 @@ END-OF-SELECTION.
               io_equip_stueli = lo_equipment_stueli
               iv_equnr        = ls_equnr-equnr
               iv_rfcdest      = prfcdest
+              iv_bp_name      = pbpname
             CHANGING
               ct_return       = lt_result
               co_http_client  = lo_http_client.

@@ -7,8 +7,8 @@ public section.
   class-methods WRITE_ERROR
     importing
       !IV_MSGTY type SYMSGTY
-      !IV_JSON type STRING
-      !IV_EQUNR type EQUNR
+      !IV_JSON type STRING optional
+      !IV_EQUNR type EQUNR optional
       !IV_MSGNO type SYMSGNO
       !IV_MSGID type MSGID
       !IV_MSGV1 type MSGV1 optional
@@ -48,7 +48,7 @@ CLASS ZACO_CL_ERROR_LOG IMPLEMENTATION.
     ls_err_log-err_group = iv_err_group.
     ls_err_log-json  = iv_json.
 
-    insert ZACO_ERR_LOG from ls_err_log.
+    modify ZACO_ERR_LOG from ls_err_log.
     commit work.
 
 

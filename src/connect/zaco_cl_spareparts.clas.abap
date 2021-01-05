@@ -15,6 +15,7 @@ public section.
     importing
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
       !IV_RFCDEST type RFCDEST
+      !IV_BP_NAME type ZACO_DE_BP_AIN
     changing
       !CT_RESULT type ZACO_T_JSON_BODY .
   methods DELETE_SPAREPART
@@ -29,10 +30,13 @@ public section.
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
       !IV_ID type STRING
       !IV_RFCDEST type RFCDEST optional
+      !IV_BP_NAME type ZACO_DE_BP_AIN
     changing
       !CT_RESULT type ZACO_T_JSON_BODY .
 protected section.
 private section.
+
+  data GS_MSG type BAL_S_MSG .
 
   methods MANUFACTURERPARTNUMBER
     importing
@@ -43,6 +47,7 @@ private section.
     importing
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
       !IV_RFCDEST type RFCDEST
+      !IV_BP_NAME type ZACO_DE_BP_AIN
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
   methods EANNUMBER
@@ -216,17 +221,19 @@ METHOD BREIT.
 ENDMETHOD.
 
 
-METHOD CREATE_SPAREPART.
+METHOD create_sparepart.
 
-  DATA: lo_http_client TYPE REF TO if_http_client.
+  DATA: lo_http_client  TYPE REF TO if_http_client.
 
-  DATA: lt_json TYPE zaco_t_json_body.
+  DATA: lt_json         TYPE zaco_t_json_body.
 
-  DATA: lv_service TYPE string.
-  DATA: lv_status_code TYPE i.
-  DATA: lv_reason TYPE string.
-  DATA: lv_body TYPE string.
-  DATA: lv_json TYPE string.
+  DATA: lv_equnr        TYPE equnr.  "log
+  DATA: lv_matnr        TYPE matnr.
+  DATA: lv_service      TYPE string.
+  DATA: lv_status_code  TYPE i.
+  DATA: lv_reason       TYPE string.
+  DATA: lv_body         TYPE string.
+  DATA: lv_json         TYPE string.
 
   CALL METHOD me->manufacturerpartnumber
     EXPORTING
@@ -237,6 +244,7 @@ METHOD CREATE_SPAREPART.
   CALL METHOD me->manufacturer
     EXPORTING
       io_material = io_material
+      iv_bp_name  = iv_bp_name
       iv_rfcdest  = iv_rfcdest
     CHANGING
       ct_json     = lt_json.
@@ -255,8 +263,8 @@ METHOD CREATE_SPAREPART.
     CHANGING
       ct_json     = lt_json.
 
-   call method me->sparepartdescription_langu
-     exporting
+  CALL METHOD me->sparepartdescription_langu
+    EXPORTING
       io_material = io_material
     CHANGING
       ct_json     = lt_json.
@@ -357,9 +365,54 @@ METHOD CREATE_SPAREPART.
       dest_not_found           = 1
       destination_no_authority = 2
       OTHERS                   = 3.
-  IF sy-subrc <> 0.
-    MESSAGE e001(zpsain).
-  ENDIF.
+  CASE sy-subrc.
+    WHEN '1'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '001'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '2'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '002'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '3'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '003'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+
+  ENDCASE.
 *-----------------------------------------------------------------------
 * Set Request URI
 *-----------------------------------------------------------------------
@@ -371,7 +424,7 @@ METHOD CREATE_SPAREPART.
   lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
 
 
-  CALL METHOD zaco_cl_connection_ain=>CONSTRUCT_BODY_MAT_LANGU
+  CALL METHOD zaco_cl_connection_ain=>construct_body_mat_langu
     EXPORTING
       it_body = lt_json
     CHANGING
@@ -399,19 +452,51 @@ METHOD CREATE_SPAREPART.
   lo_http_client->response->get_status( IMPORTING code   = lv_status_code
                                                   reason = lv_reason ).
 
+  lv_json = lo_http_client->response->get_cdata( ).
   IF lv_status_code NE 200.
 *-----------------------------------------------------------------------
 * Refresh HTTP Request
 *-----------------------------------------------------------------------
     lo_http_client->refresh_request( ).
 
-    lv_json = lo_http_client->response->get_cdata( ).
     CALL METHOD zaco_cl_json=>json_to_data
       EXPORTING
         iv_json = lv_json
       CHANGING
         ct_data = ct_result.
+    CALL METHOD io_material->get_matnr
+      CHANGING
+        cv_matnr = lv_matnr.
+
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'E'.
+    gs_msg-msgno = '402'.
+    gs_msg-msgv1 = lv_matnr.
+    lv_json  = lv_json.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'MAT'.
   ELSE.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'S'.
+    gs_msg-msgno = '407'.
+    gs_msg-msgv1 = lv_matnr.
+    lv_json  = lv_json.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'MAT'.
     REFRESH ct_result.
   ENDIF.
   CALL METHOD lo_http_client->close( ).
@@ -419,28 +504,29 @@ METHOD CREATE_SPAREPART.
 ENDMETHOD.
 
 
-METHOD DELETE_SPAREPART.
+METHOD delete_sparepart.
 
-  DATA: lo_http_client TYPE REF TO if_http_client.
+  DATA: lo_http_client  TYPE REF TO if_http_client.
 
-  DATA: lt_json TYPE zaco_t_json_body.
+  DATA: lt_json         TYPE zaco_t_json_body.
 
-  DATA: lv_matnr TYPE matnr.
-  DATA: lv_service TYPE string.
-  DATA: lv_status_code TYPE i.
-  DATA: lv_reason TYPE string.
-  DATA: lv_body TYPE string.
-  DATA: lv_json TYPE string.
-  DATA: lv_ok TYPE char1.
-  DATA: lv_id TYPE string.
+  DATA: lv_equnr        TYPE equnr.
+  DATA: lv_matnr        TYPE matnr.
+  DATA: lv_service      TYPE string.
+  DATA: lv_status_code  TYPE i.
+  DATA: lv_reason       TYPE string.
+  DATA: lv_body         TYPE string.
+  DATA: lv_json         TYPE string.
+  DATA: lv_ok           TYPE char1.
+  DATA: lv_id           TYPE string.
 
-  DATA: lv_body_begin TYPE string.
-  DATA: lv_body_end TYPE string.
-  DATA: lv_name_end TYPE string.
-  DATA: lv_name_begin TYPE string.
+  DATA: lv_body_begin     TYPE string.
+  DATA: lv_body_end       TYPE string.
+  DATA: lv_name_end       TYPE string.
+  DATA: lv_name_begin     TYPE string.
   DATA: lv_multiple_begin TYPE string.
-  DATA: lv_multiple_last TYPE string.
-  DATA: lv_line_end TYPE string.
+  DATA: lv_multiple_last  TYPE string.
+  DATA: lv_line_end       TYPE string.
 
   CALL METHOD zaco_cl_connection_ain=>connect_to_ain
     EXPORTING
@@ -451,9 +537,54 @@ METHOD DELETE_SPAREPART.
       dest_not_found           = 1
       destination_no_authority = 2
       OTHERS                   = 3.
-  IF sy-subrc <> 0.
-    MESSAGE e001(zpsain).
-  ENDIF.
+  CASE sy-subrc.
+    WHEN '1'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '001'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '2'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '002'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '3'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '003'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+
+  ENDCASE.
 
 
 *-----------------------------------------------------------------------
@@ -512,6 +643,7 @@ METHOD DELETE_SPAREPART.
   lo_http_client->response->get_status( IMPORTING code   = lv_status_code
                                                   reason = lv_reason ).
 
+  lv_json = lo_http_client->response->get_cdata( ).
   IF lv_status_code NE 200.
 *-----------------------------------------------------------------------
 * Refresh HTTP Request
@@ -525,6 +657,24 @@ METHOD DELETE_SPAREPART.
       CHANGING
         ct_data = ct_result.
   ELSE.
+    CALL METHOD io_material->get_matnr
+      CHANGING
+        cv_matnr = lv_matnr.
+
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'I'.
+    gs_msg-msgno = '403'.
+    gs_msg-msgv1 = lv_matnr.
+    lv_json  = lv_json.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'MAT'.
     REFRESH ct_result.
   ENDIF.
 
@@ -775,20 +925,12 @@ METHOD MANUFACTURER.
 
   CALL METHOD lo_bp_ain->get_bp_id_by_name
     EXPORTING
-      iv_bp_name = 'NETZSCH_PS'
+      iv_bp_name = iv_bp_name              "'NETZSCH_PS'
       iv_rfcdest = iv_rfcdest
     CHANGING
 *     cv_loghndl =
       cv_bp_id   = ls_json-value
       ct_result  = lt_result.
-
-*  CALL METHOD zpsain_cl_templates=>get_businesspartner_by_name
-*    EXPORTING
-*      iv_rfcdest   = iv_rfcdest
-*      iv_name      = 'NETZSCH_PS'
-*    CHANGING
-**     cv_loghndl   =
-*      ic_partnerid = ls_json-value.
 
   APPEND ls_json TO ct_json.
 
@@ -944,14 +1086,15 @@ method SPAREPARTS.
 endmethod.
 
 
-METHOD SPAREPARTS_ALREADY_TRANSFERRED.
+METHOD spareparts_already_transferred.
 
-  DATA: lo_http_client TYPE REF TO if_http_client.
+  DATA: lo_http_client  TYPE REF TO if_http_client.
 
-  DATA: lt_json TYPE zaco_t_json_body.
+  DATA: lt_json         TYPE zaco_t_json_body.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: ls_json         TYPE zaco_s_json_body.
 
+  DATA: lv_equnr        TYPE equnr. "log
   DATA: lv_service      TYPE string.
   DATA: lv_filter       TYPE string.
 
@@ -970,9 +1113,55 @@ METHOD SPAREPARTS_ALREADY_TRANSFERRED.
       dest_not_found           = 1
       destination_no_authority = 2
       OTHERS                   = 3.
-  IF sy-subrc <> 0.
-    MESSAGE e001(zpsain).
-  ENDIF.
+
+  CASE sy-subrc.
+    WHEN '1'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '001'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '2'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '002'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '3'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '003'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+
+  ENDCASE.
 
 
   lv_filter = |/parts?$filter=manufacturerPartNumber eq '|.
@@ -1005,8 +1194,8 @@ METHOD SPAREPARTS_ALREADY_TRANSFERRED.
   lo_http_client->response->get_status( IMPORTING code   = lv_status_code
                                                   reason = lv_reason ).
 
+  lv_json = lo_http_client->response->get_cdata( ).
   IF lv_status_code EQ '200'.
-    lv_json = lo_http_client->response->get_cdata( ).
     lv_length = strlen( lv_json ).
     IF lv_length > 2.
       cv_transferred = 'X'.
@@ -1024,6 +1213,19 @@ METHOD SPAREPARTS_ALREADY_TRANSFERRED.
       cv_transferred = space.
     ENDIF.
   ELSE.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'E'.
+    gs_msg-msgno = '404'.
+    lv_json  = lv_json.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'MAT'.
     cv_transferred = space.
   ENDIF.
   CALL METHOD lo_http_client->close( ).
@@ -1135,30 +1337,78 @@ METHOD UOM_VOLUMEN.
 ENDMETHOD.
 
 
-METHOD UPDATE_SPAREPART.
+METHOD update_sparepart.
 
   DATA: lo_http_client  TYPE REF TO if_http_client.
 
-  DATA: lt_json TYPE zaco_t_json_body.
+  DATA: lt_json         TYPE zaco_t_json_body.
 
-  DATA: lv_service TYPE string.
-  DATA: lv_status_code TYPE i.
-  DATA: lv_reason TYPE string.
-  DATA: lv_body TYPE string.
-  DATA: lv_json TYPE string.
+  DATA: lv_equnr        TYPE equnr.  "log
+  DATA: lv_matnr        TYPE matnr.
+  DATA: lv_service      TYPE string.
+  DATA: lv_status_code  TYPE i.
+  DATA: lv_reason       TYPE string.
+  DATA: lv_body         TYPE string.
+  DATA: lv_json         TYPE string.
 
   CALL METHOD zaco_cl_connection_ain=>connect_to_ain
     EXPORTING
       iv_rfcdest               = iv_rfcdest
-     CHANGING
+    CHANGING
       co_http_client           = lo_http_client
-*      EXCEPTIONS
-*        DEST_NOT_FOUND           = 1
-*        DESTINATION_NO_AUTHORITY = 2
-*        others                   = 3
-          .
-  IF sy-subrc <> 0.
-  ENDIF.
+    EXCEPTIONS
+      dest_not_found           = 1
+      destination_no_authority = 2
+      OTHERS                   = 3.
+
+  CASE sy-subrc.
+    WHEN '1'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '001'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '2'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '002'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '3'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '003'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+
+  ENDCASE.
 *-----------------------------------------------------------------------
 * Set Request URI
 *-----------------------------------------------------------------------
@@ -1179,6 +1429,7 @@ METHOD UPDATE_SPAREPART.
     EXPORTING
       io_material = io_material
       iv_rfcdest  = iv_rfcdest
+      iv_bp_name  = iv_bp_name
     CHANGING
       ct_json     = lt_json.
 
@@ -1323,19 +1574,52 @@ METHOD UPDATE_SPAREPART.
   lo_http_client->response->get_status( IMPORTING code   = lv_status_code
                                                   reason = lv_reason ).
 
+  lv_json = lo_http_client->response->get_cdata( ).
+  CALL METHOD io_material->get_matnr
+    CHANGING
+      cv_matnr = lv_matnr.
+
   IF lv_status_code NE 200.
 *-----------------------------------------------------------------------
 * Refresh HTTP Request
 *-----------------------------------------------------------------------
     lo_http_client->refresh_request( ).
 
-    lv_json = lo_http_client->response->get_cdata( ).
     CALL METHOD zaco_cl_json=>json_to_data
       EXPORTING
         iv_json = lv_json
       CHANGING
         ct_data = ct_result.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'E'.
+    gs_msg-msgno = '405'.
+    gs_msg-msgv1 = lv_matnr.
+    lv_json  = lv_json.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'MAT'.
   ELSE.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'S'.
+    gs_msg-msgno = '406'.
+    gs_msg-msgv1 = lv_matnr.
+    lv_json  = lv_json.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'MAT'.
+
     REFRESH ct_result.
   ENDIF.
   lo_http_client->close( ).

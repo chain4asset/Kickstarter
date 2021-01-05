@@ -130,6 +130,15 @@ END-OF-SELECTION.
         CHANGING
           ct_spareparts   = lt_spareparts.
 
+      LOOP AT lt_spareparts INTO ls_spareparts.
+        WRITE:/ ls_spareparts-id,
+        ls_spareparts-sparepartname,
+        ls_spareparts-manufacturerpartnumber,
+        ls_spareparts-sparepartdescription,
+        ls_spareparts-unitofmeasure,
+        ls_spareparts-bomquantity,
+        ls_spareparts-quantity.
+      ENDLOOP.
 
     ENDIF.
     FREE: lo_equipment_ain, lo_equipment.

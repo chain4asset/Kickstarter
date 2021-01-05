@@ -18,7 +18,7 @@ public section.
     changing
       !CV_MODEL_ID type STRING
       !CV_OK type BOOLEAN .
-  methods GET_EQUIPMENT_ID_BY_NAME
+  methods GET_EQUIPMENT_ID_BY_NAME_OBSOL
     importing
       !IV_NAME type ZACO_DE_MODELNAME
     changing
@@ -73,17 +73,12 @@ public section.
     changing
       !CV_TEMPLATE_ID type STRING
       !CV_OK type BOOLEAN .
-  methods GET_E_CL_GROUP_ID_BY_NAME
-    importing
-      !IV_NAME type GROUP
-    changing
-      !CV_GROUP_ID type STRING
-      !CV_OK type BOOLEAN .
 protected section.
 private section.
 
   data GO_HTTP_CLIENT type ref to IF_HTTP_CLIENT .
   data GT_MODEL type ZACO_TT_MODEL .
+  class-data GS_MSG type BAL_S_MSG .
 
   methods GET_GROUP_NAME_BY_NAME
     importing
@@ -182,7 +177,7 @@ method GET_ATTRIBUTE_ID_BY_NAME.
 endmethod.
 
 
-method GET_EQUIPMENT_ID_BY_NAME.
+method GET_EQUIPMENT_ID_BY_NAME_OBSOL.
 
   data: lt_RESULT       Type ZACO_T_JSON_BODY.
 
@@ -345,80 +340,6 @@ METHOD GET_EXTERNAL_SYSTEM.
   ENDIF.
 
 ENDMETHOD.
-
-
-method GET_E_CL_GROUP_ID_BY_NAME.
-
-  data: lt_RESULT       Type ZACO_T_JSON_BODY.
-
-  data: ls_result       Type ZACO_S_JSON_BODY.
-
-  data: lv_service      type string.
-  data: lv_filter       type string.
-
-  data: lv_status_code  type i.
-  data: lv_reason       type string.
-  data: lv_json         type string.
-  data: lv_length       type i.
-
-  cv_ok = 'X'.
-
-  lv_filter = |/attributeGroup?$filter=name eq '|.         "Attributgruppe
-
-  concatenate ZACO_CL_CONNECTION_AIN=>gv_service lv_filter iv_name '''' into lv_service.
-
-  cl_http_utility=>set_request_uri( request = go_http_client->request
-                                    uri  = lv_service ).
-
-  go_http_client->request->set_method( 'GET' ).
-
-*-----------------------------------------------------------------------
-* Send Request and Receive Response
-*-----------------------------------------------------------------------
-  go_http_client->send(
-    EXCEPTIONS
-    http_communication_failure = 1
-    http_invalid_state         = 2
-    http_processing_failed     = 3
-    http_invalid_timeout       = 4
-    OTHERS                     = 5 ).
-
-  go_http_client->receive(
-    EXCEPTIONS
-    http_communication_failure = 1
-    http_invalid_state         = 2
-    http_processing_failed     = 3
-    OTHERS                     = 4 ).
-
-  go_http_client->response->get_status( IMPORTING code   = lv_status_code
-                                                  reason = lv_reason ).
-
-  if lv_status_code eq '200'.
-    lv_json = go_http_client->response->get_cdata( ).
-
-*------------ Lv_json deserialisieren und equipmentId filtern   ----------------*
-    CALL METHOD ZACO_CL_JSON=>JSON_TO_DATA
-      EXPORTING
-        iV_JSON = lv_json
-      CHANGING
-        CT_DATA = lt_result.
-
-    lv_length = strlen( lv_json ).
-    if lv_length > 2.
-      read table lt_result into ls_result with key name = 'id'.
-      if sy-subrc = 0.
-        cv_group_id = ls_result-value.
-      else.
-        cv_ok = space.
-      endif.
-    else.
-      cv_ok = space.
-    endif.
-  else.
-    cv_ok = space.
-  endif.
-
-endmethod.
 
 
 method GET_GROUP_ID_BY_NAME.
@@ -719,6 +640,7 @@ METHOD TRANSLATE_UOM_TO_AIN.
   DATA: lv_service      TYPE string.
   DATA: lv_filter       TYPE string.
 
+  data: lv_equnr        type equnr.  "log
   DATA: lv_status_code  TYPE i.
   DATA: lv_reason       TYPE string.
   DATA: lv_json         TYPE string.
@@ -734,9 +656,55 @@ METHOD TRANSLATE_UOM_TO_AIN.
       dest_not_found           = 1
       destination_no_authority = 2
       OTHERS                   = 3.
-  IF sy-subrc <> 0.
-*   Implement suitable error handling here
-  ENDIF.
+
+   CASE sy-subrc.
+    WHEN '1'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '001'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '2'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '002'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '3'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '003'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+
+  ENDCASE.
 
   lv_filter = |/uom/targetunits|.         "Attributgruppe
 
@@ -771,8 +739,8 @@ METHOD TRANSLATE_UOM_TO_AIN.
   lo_http_client->response->get_status( IMPORTING code   = lv_status_code
                                                   reason = lv_reason ).
 
-  IF lv_status_code EQ '200'.
     lv_json = lo_http_client->response->get_cdata( ).
+  IF lv_status_code EQ '200'.
 
 *------------ Lv_json deserialisieren und equipmentId filtern   ----------------*
     CALL METHOD zaco_cl_json=>json_to_data
@@ -792,6 +760,21 @@ METHOD TRANSLATE_UOM_TO_AIN.
         cv_dimension = ls_result-value.
       ENDIF.
     ENDIF.
+  else.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'I'.
+    gs_msg-msgno = '401'.
+    gs_msg-msgv1 = iv_uom_erp.
+    lv_json  = lv_json.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'MAT'.
   ENDIF. "200
 ENDMETHOD.
 ENDCLASS.

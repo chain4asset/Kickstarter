@@ -95,6 +95,12 @@
     </item>
     <item>
      <ID>S</ID>
+     <KEY>PBPNAME</KEY>
+     <ENTRY>AIN Bezeichnung des Hersteller</ENTRY>
+     <LENGTH>38</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
      <KEY>PRFCDEST</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>23</LENGTH>
@@ -104,21 +110,21 @@
      <ID>S</ID>
      <KEY>PSTLAN</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>9</LENGTH>
+     <LENGTH>24</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
      <ID>S</ID>
      <KEY>PSTLTY</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>9</LENGTH>
+     <LENGTH>22</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>
      <ID>S</ID>
      <KEY>PWERKS</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>9</LENGTH>
+     <LENGTH>12</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
     <item>

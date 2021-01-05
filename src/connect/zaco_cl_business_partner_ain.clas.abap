@@ -103,7 +103,7 @@ METHOD GET_BP_AIN.
 ENDMETHOD.
 
 
-METHOD GET_BP_ID_BY_NAME.
+METHOD get_bp_id_by_name.
 *---------------------------------------------------------------------------*
 *
 *    Copyright (C) 2019 NETZSCH Pumps and Systems GmbH
@@ -136,6 +136,7 @@ METHOD GET_BP_ID_BY_NAME.
   DATA: ls_result       TYPE zaco_s_json_body.
   DATA: ls_result_temp  TYPE zaco_s_json_body.
 
+  DATA: lv_equnr        TYPE equnr.    "log
   DATA: lv_ok           TYPE boolean.
   DATA: lv_service      TYPE string.
   DATA: lv_status_code  TYPE i.
@@ -145,34 +146,64 @@ METHOD GET_BP_ID_BY_NAME.
   DATA: lv_rfcdest      TYPE rfcdest.
   DATA: lv_tabix        TYPE sy-tabix.
 
-  IF cv_loghndl IS INITIAL.
-    CALL METHOD zaco_cl_logs=>create_log_handler
-      EXPORTING
-        is_log     = gs_log
-        iv_objekt  = 'EQUI'
-      CHANGING
-        cv_loghndl = cv_loghndl.
-  ENDIF.
 *--------
   CALL METHOD zaco_cl_connection_ain=>connect_to_ain
     EXPORTING
       iv_rfcdest               = iv_rfcdest
-     CHANGING
+    CHANGING
       co_http_client           = lo_http_client
-*      EXCEPTIONS
-*        DEST_NOT_FOUND           = 1
-*        DESTINATION_NO_AUTHORITY = 2
-*        others                   = 3
-          .
-  IF sy-subrc <> 0.
-    gs_msg-msgty = 'E'.
-    gs_msg-msgid = 'ZACO'.
-    gs_msg-msgno = '102'.  "Verbindung zu AIN System fehlgeschlagen.
-    CALL METHOD zaco_cl_logs=>add_log_entry
-      EXPORTING
-        is_msg     = gs_msg
-        iv_loghndl = cv_loghndl.
-  ENDIF.
+    EXCEPTIONS
+      dest_not_found           = 1
+      destination_no_authority = 2
+      OTHERS                   = 3.
+  CASE sy-subrc.
+    WHEN '1'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '001'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '2'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '002'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '3'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '003'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+
+  ENDCASE.
 
   CONCATENATE zaco_cl_connection_ain=>gv_service '/organizations/byrole?roleid=3' INTO lv_service.
   cl_http_utility=>set_request_uri( request = lo_http_client->request
@@ -219,6 +250,22 @@ METHOD GET_BP_ID_BY_NAME.
 
   ENDLOOP.
 
+  IF cv_bp_id = space.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'E'.
+    gs_msg-msgno = '221'.
+    gs_msg-msgv1 = iv_bp_name.
+    lv_json  = iv_bp_name.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'BusPa'.
+  ENDIF.
   CALL METHOD lo_http_client->close( ).
 
 ENDMETHOD.
@@ -250,6 +297,9 @@ METHOD get_bp_name_for_tplnr.
 *    aconn@nedgex.com
 *
 *---------------------------------------------------------------------------*
+
+  DATA: lv_equnr TYPE equnr.  "für log
+  DATA: lv_json  TYPE string. "für log
   DATA: lv_tplnr TYPE char30.
   DATA: lv_kunnr TYPE kunnr.
 
@@ -261,6 +311,22 @@ METHOD get_bp_name_for_tplnr.
 
   lv_kunnr = lv_tplnr.
   SELECT SINGLE bp_ain FROM zaco_busi_par INTO cv_bp_name WHERE kunnr = lv_kunnr.
+  IF sy-subrc <> 0.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'I'.
+    gs_msg-msgno = '201'.
+    gs_msg-msgv1 = lv_kunnr.
+    lv_json  = iv_tplnr.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'BusPa'.
+  ENDIF.
 
 ENDMETHOD.
 
