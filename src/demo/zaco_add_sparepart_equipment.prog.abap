@@ -34,10 +34,10 @@ DATA: lo_equi_ain         TYPE REF TO zaco_cl_equipment_ain.
 DATA: lo_http_client      TYPE REF TO if_http_client.
 
 DATA: lt_equnr TYPE STANDARD TABLE OF ltt_equnr.
-DATA: lt_result TYPE zpsain_t_json_body.
+DATA: lt_result TYPE zaco_t_json_body.
 
 DATA: ls_equnr TYPE ltt_equnr.
-DATA: ls_result TYPE zpsain_s_json_body.
+DATA: ls_result TYPE zaco_s_json_body.
 
 DATA: lv_ok TYPE char1.
 DATA: lv_transferred TYPE char1.
