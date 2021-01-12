@@ -60,8 +60,8 @@ DATA: lo_equipment      TYPE REF TO zaco_cl_equip_erp.
 
 
 DATA: lt_equnr      TYPE STANDARD TABLE OF ltt_equnr.
-DATA: lt_result     TYPE zpsain_t_json_body.
-DATA: lt_parameters TYPE zpsain_tt_name_value.
+DATA: lt_result     TYPE zaco_t_json_body.
+*DATA: lt_parameters TYPE zaco_tt_name_value.
 
 DATA: ls_equnr        TYPE ltt_equnr.
 DATA: ls_result       TYPE zaco_s_json_body.

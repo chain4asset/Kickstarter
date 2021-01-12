@@ -47,8 +47,8 @@ DATA: lo_material       TYPE REF TO zaco_cl_material.
 DATA: lo_sparepart      TYPE REF TO zaco_cl_spareparts.
 
 DATA: lt_equnr          TYPE STANDARD TABLE OF ltt_equnr.
-DATA: lt_result         TYPE zpsain_t_json_body.
-DATA: lt_parameters     TYPE zpsain_tt_name_value.
+DATA: lt_result         TYPE zaco_t_json_body.
+*DATA: lt_parameters     TYPE zpsain_tt_name_value.
 DATA: lt_position       TYPE zaco_tt_equi_stueli_pos.
 
 DATA: ls_equnr          TYPE ltt_equnr.
