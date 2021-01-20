@@ -544,7 +544,8 @@ ENDMETHOD.
 *-----------------------------------------------------------------------
 * Check OAuth Client Credentials execution is required
 *-----------------------------------------------------------------------
-    lv_oauth_cc =  cl_ain_common_utility=>get_config_value( 'AIN_OAUTH_CC' ).
+*    lv_oauth_cc =  cl_ain_common_utility=>get_config_value( 'AIN_OAUTH_CC' ).
+    lv_oauth_cc = 'X'.
     IF lv_oauth_cc  = abap_true.
 **-----------------------------------------------------------------------
 ** Get Client ID, Client Secret, Token URL

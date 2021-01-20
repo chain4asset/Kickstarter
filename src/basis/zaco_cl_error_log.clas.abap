@@ -16,9 +16,24 @@ public section.
       !IV_MSGV3 type MSGV3 optional
       !IV_MSGV4 type MSGV4 optional
       !IV_ERR_GROUP type ZACO_DE_ERR_GROUP optional .
-  class-methods DELETE_ERROR_LOG .
+  class-methods DELETE_ERROR_LOG
+    importing
+      !IV_ERR_GROUP type ZACO_DE_ERR_GROUP optional
+      !IV_DATUM_V type DATUM
+      !IV_DATUM_B type DATUM
+    exceptions
+      ERR_DEL_GROUP_FAIL
+      ERR_DEL_FAIL .
 protected section.
 private section.
+
+  methods READ_ERROR
+    importing
+      !IV_DATUM_B type DATUM
+      !IV_DATUM_V type DATUM
+      !IV_ERR_GROUP type ZACO_DE_ERR_GROUP
+    changing
+      !CT_ERR_LOG type ZACO_TT_ERR_LOG .
 ENDCLASS.
 
 
@@ -26,9 +41,66 @@ ENDCLASS.
 CLASS ZACO_CL_ERROR_LOG IMPLEMENTATION.
 
 
-  method DELETE_ERROR_LOG.
+  METHOD delete_error_log.
 
-  endmethod.
+    IF iv_err_group NE space.
+      DELETE FROM zaco_err_log WHERE ERR_GROUP = iv_err_group
+                                and ( datum >= iv_datum_v
+                                AND datum <= iv_datum_b ).
+      if sy-subrc <> 0.
+        raise err_del_group_fail.
+      endif.
+    ELSE.
+      DELETE FROM zaco_err_log WHERE ( datum >= iv_datum_v
+                                AND datum <= iv_datum_b ).
+      if sy-subrc <> 0.
+        raise err_del_fail.
+      endif.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD read_error.
+
+  if iv_err_group ne space.
+    SELECT  zaco_err_log~datum,
+            zaco_err_log~utime,
+            zaco_err_log~msgid,
+            zaco_err_log~msgno,
+            zaco_err_log~equnr,
+            zaco_err_log~err_group,
+            zaco_err_log~msgty,
+            zaco_err_log~msgv1,
+            zaco_err_log~msgv2,
+            zaco_err_log~msgv3,
+            zaco_err_log~msgv4,
+            zaco_err_log~json
+            APPENDING CORRESPONDING FIELDS OF TABLE @ct_err_log
+            FROM zaco_err_log
+            WHERE err_group = @iv_err_group
+             AND ( datum >= @iv_datum_v
+                   AND datum <= @iv_datum_b ).
+   else.
+    SELECT  zaco_err_log~datum,
+            zaco_err_log~utime,
+            zaco_err_log~msgid,
+            zaco_err_log~msgno,
+            zaco_err_log~equnr,
+            zaco_err_log~err_group,
+            zaco_err_log~msgty,
+            zaco_err_log~msgv1,
+            zaco_err_log~msgv2,
+            zaco_err_log~msgv3,
+            zaco_err_log~msgv4,
+            zaco_err_log~json
+            APPENDING CORRESPONDING FIELDS OF TABLE @ct_err_log
+            FROM zaco_err_log
+            WHERE ( datum >= @iv_datum_v
+                   AND datum <= @iv_datum_b ).
+
+   endif.
+  ENDMETHOD.
 
 
   method WRITE_ERROR.

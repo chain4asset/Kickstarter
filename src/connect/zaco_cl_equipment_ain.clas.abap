@@ -989,7 +989,7 @@ METHOD create_equipment.
   DATA: lv_body         TYPE string.
   DATA: lv_json         TYPE string.
   DATA: lv_equnr        TYPE equnr.
-  DATA: lv_rfcdest      TYPE rfcdest.
+*  DATA: lv_rfcdest      TYPE rfcdest.
   DATA: lv_matnr        TYPE matnr.
   DATA: lv_tplnr        TYPE tplnr.
 
@@ -1206,7 +1206,7 @@ METHOD data_gathering.
   DATA: lv_body         TYPE string.
   DATA: lv_json         TYPE string.
   DATA: lv_equnr        TYPE equnr.
-  DATA: lv_rfcdest      TYPE rfcdest.
+*  DATA: lv_rfcdest      TYPE rfcdest.
   DATA: lv_matnr        TYPE matnr.
   DATA: lv_kmatn        TYPE kmatn.
   DATA: lv_tplnr        TYPE tplnr.
@@ -1418,7 +1418,7 @@ METHOD data_gathering.
   CALL METHOD me->operatorid
     EXPORTING
       io_equipment            = io_equipment
-      iv_rfcdest              = lv_rfcdest
+      iv_rfcdest              = iv_rfcdest
       iv_businesspartner_name = iv_business_pa_std
     CHANGING
       ct_json                 = lt_json.
