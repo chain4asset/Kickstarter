@@ -24,16 +24,22 @@ public section.
     exceptions
       ERR_DEL_GROUP_FAIL
       ERR_DEL_FAIL .
-protected section.
-private section.
-
-  methods READ_ERROR
+  class-methods READ_ERROR
     importing
       !IV_DATUM_B type DATUM
       !IV_DATUM_V type DATUM
       !IV_ERR_GROUP type ZACO_DE_ERR_GROUP
     changing
       !CT_ERR_LOG type ZACO_TT_ERR_LOG .
+  class-methods DESERIALIZE_ERROR_JSON
+    importing
+      !IV_ERR_GROUP type ZACO_DE_ERR_GROUP
+      !IV_MSGTY type MSGTY
+      !IV_JSON type ZACO_DE_STRING
+    changing
+      !CS_ERR_JSON type ZACO_S_JSON_ERROR .
+protected section.
+private section.
 ENDCLASS.
 
 
@@ -56,6 +62,27 @@ CLASS ZACO_CL_ERROR_LOG IMPLEMENTATION.
       if sy-subrc <> 0.
         raise err_del_fail.
       endif.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD deserialize_error_json.
+    IF iv_msgty = 'E'.
+*--------------- Deserialize Error Message
+      /ui2/cl_json=>deserialize(
+        EXPORTING
+          json        = iv_json
+          pretty_name = /ui2/cl_json=>pretty_mode-camel_case
+        CHANGING
+          data        = cs_err_json ).
+
+    ELSE.
+      CASE iv_err_group.
+        WHEN 'EQUI'.
+*--------------- Deserialize Equipment Information
+
+      ENDCASE.
     ENDIF.
 
   ENDMETHOD.
