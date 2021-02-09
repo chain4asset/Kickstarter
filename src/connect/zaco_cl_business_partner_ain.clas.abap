@@ -162,7 +162,7 @@ METHOD get_bp_id_by_name.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '001'.
       gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
+
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -177,7 +177,7 @@ METHOD get_bp_id_by_name.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '002'.
       gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
+
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -192,7 +192,7 @@ METHOD get_bp_id_by_name.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '003'.
       gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
+
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -255,7 +255,7 @@ METHOD get_bp_id_by_name.
     gs_msg-msgty = 'E'.
     gs_msg-msgno = '221'.
     gs_msg-msgv1 = iv_bp_name.
-    lv_json  = iv_bp_name.
+    lv_json  = lv_json.
     CALL METHOD zaco_cl_error_log=>write_error
       EXPORTING
         iv_msgty     = gs_msg-msgty

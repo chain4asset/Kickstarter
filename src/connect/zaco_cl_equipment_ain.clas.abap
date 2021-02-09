@@ -1028,7 +1028,7 @@ METHOD create_equipment.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '002'.
       gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
+
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -1043,7 +1043,7 @@ METHOD create_equipment.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '003'.
       gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
+
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -1265,7 +1265,7 @@ METHOD data_gathering.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '003'.
       gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
+
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -1339,7 +1339,6 @@ METHOD data_gathering.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '137'.
       gs_msg-msgv1 = lv_equnr.
-      lv_json  = TEXT-003.
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -1356,7 +1355,6 @@ METHOD data_gathering.
     gs_msg-msgty = 'I'.
     gs_msg-msgno = '136'.
     gs_msg-msgv1 = lv_equnr.
-    lv_json  = TEXT-002.
     CALL METHOD zaco_cl_error_log=>write_error
       EXPORTING
         iv_msgty     = gs_msg-msgty
@@ -1688,7 +1686,7 @@ METHOD equipment_already_transferred.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '001'.
       gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
+
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -1703,7 +1701,7 @@ METHOD equipment_already_transferred.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '002'.
       gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
+
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -1718,7 +1716,7 @@ METHOD equipment_already_transferred.
       gs_msg-msgty = 'E'.
       gs_msg-msgno = '003'.
       gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
+
       CALL METHOD zaco_cl_error_log=>write_error
         EXPORTING
           iv_msgty     = gs_msg-msgty
@@ -2740,7 +2738,7 @@ ENDMETHOD.
         gs_msg-msgty = 'E'.
         gs_msg-msgno = '001'.
         gs_msg-msgv1 = iv_rfcdest.
-        lv_json  = iv_rfcdest.
+
         CALL METHOD zaco_cl_error_log=>write_error
           EXPORTING
             iv_msgty     = gs_msg-msgty
@@ -2755,7 +2753,7 @@ ENDMETHOD.
         gs_msg-msgty = 'E'.
         gs_msg-msgno = '002'.
         gs_msg-msgv1 = iv_rfcdest.
-        lv_json  = iv_rfcdest.
+
         CALL METHOD zaco_cl_error_log=>write_error
           EXPORTING
             iv_msgty     = gs_msg-msgty
@@ -2770,7 +2768,7 @@ ENDMETHOD.
         gs_msg-msgty = 'E'.
         gs_msg-msgno = '003'.
         gs_msg-msgv1 = iv_rfcdest.
-        lv_json  = iv_rfcdest.
+
         CALL METHOD zaco_cl_error_log=>write_error
           EXPORTING
             iv_msgty     = gs_msg-msgty

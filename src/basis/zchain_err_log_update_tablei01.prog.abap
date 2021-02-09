@@ -1,23 +1,11 @@
 *----------------------------------------------------------------------*
-***INCLUDE ZCHAIN_ERR_LOG_USER_COMMANDI01.
+***INCLUDE ZCHAIN_ERR_LOG_UPDATE_TABLEI01.
 *----------------------------------------------------------------------*
 *&---------------------------------------------------------------------*
-*&      Module  USER_COMMAND_0110  INPUT
+*&      Module  UPDATE_TABLE  INPUT
 *&---------------------------------------------------------------------*
 *       text
 *----------------------------------------------------------------------*
-MODULE user_command_0110 INPUT.
-
-  case fcode.
-    when 'BACK'.
-      set screen 0.
-      exit.
-    when 'JSON'.
-      perform display_json.
-    when'REFR'.
-      perform lese_erneut.
-   endcase.
-
-
-
+MODULE update_table INPUT.
+  modify gt_error_dia from gs_error_dia index CONT_ERR-CURRENT_LINE.
 ENDMODULE.
