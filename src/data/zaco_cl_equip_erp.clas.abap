@@ -123,6 +123,13 @@ public section.
   methods GET_KUNNR
     changing
       !CV_KUNNR type KUNNR .
+  methods GET_LANGTEXT
+    changing
+      !CT_LINE type TLINE_T .
+  methods SET_LANGTEXT
+    importing
+      !IV_EQUNR type EQUNR
+      !IV_SPRAS type SPRAS .
 protected section.
 private section.
 
@@ -145,6 +152,7 @@ private section.
   data GV_PAUFNR type AUFNR .
   data GV_PPOSNR type CO_POSNR .
   data GV_KMATN type KMATN .
+  data GT_LINE_T type TLINE_T .
 ENDCLASS.
 
 
@@ -226,6 +234,13 @@ METHOD GET_KUNNR.
 
 
 ENDMETHOD.
+
+
+  method GET_LANGTEXT.
+
+    ct_line = gt_line_t.
+
+  endmethod.
 
 
 method GET_LVORM.
@@ -339,6 +354,7 @@ METHOD lese_equipment.
   DATA: lv_iloan      TYPE iloan.
   DATA: lv_tplnr      TYPE tplnr.
   DATA: lv_kunnr      TYPE kunnr.
+  DATA: lv_fallb      TYPE spras.
 
   SELECT SINGLE * FROM equi INTO ls_equi WHERE equnr = iv_equnr.
   IF sy-subrc <> 0.
@@ -389,26 +405,33 @@ METHOD lese_equipment.
         iv_kmatn = ls_equi-kmatn.
 
     IF iv_spras = space.
+      lv_fallb = sy-langu.
       SELECT SINGLE eqktx FROM eqkt INTO lv_eqktx WHERE equnr = ls_equi-equnr
                                                    AND  spras = sy-langu.
       IF sy-subrc <> 0.    "Fallback Sprache Englisch
         SELECT SINGLE eqktx FROM eqkt INTO lv_eqktx WHERE equnr = ls_equi-equnr
                                                      AND  spras = 'E'.
-
+        lv_fallb = 'E'.
       ENDIF.
     ELSE.
+      lv_fallb = iv_spras.
       SELECT SINGLE eqktx FROM eqkt INTO lv_eqktx WHERE equnr = ls_equi-equnr
                                                    AND  spras = iv_spras.
       IF sy-subrc <> 0.    "Fallback Sprache Englisch
         SELECT SINGLE eqktx FROM eqkt INTO lv_eqktx WHERE equnr = ls_equi-equnr
                                                      AND  spras = 'E'.
-
+        lv_fallb = 'E'.
       ENDIF.
 
     ENDIF.
     CALL METHOD me->set_shtxt
       EXPORTING
         iv_shtxt = lv_eqktx.
+*------------------------ Langtext lesen
+    CALL METHOD me->set_langtext
+      EXPORTING
+        iv_equnr = ls_equi-equnr
+        iv_spras = lv_fallb.                "gleiche Sprache wie Kurztext
 
     CALL METHOD me->set_typbz
       EXPORTING
@@ -566,6 +589,24 @@ METHOD SET_KMATN.
   gv_kmatn = iv_kmatn.
 
 ENDMETHOD.
+
+
+  METHOD set_langtext.
+
+    DATA: lv_tdname TYPE THEAD-TDNAME.
+
+    lv_tdname = iv_equnr.
+
+    CALL METHOD zaco_cl_text_read=>read_text
+      EXPORTING
+        iv_tdobject = 'EQUI'
+        iv_tdname   = lv_tdname
+        iv_tdid     = 'LTXT'
+        iv_tdspras  = iv_spras
+      RECEIVING
+        ct_tline    = gt_line_t.
+
+  ENDMETHOD.
 
 
 method SET_LVORM.
