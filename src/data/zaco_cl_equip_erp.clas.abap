@@ -125,7 +125,7 @@ public section.
       !CV_KUNNR type KUNNR .
   methods GET_LANGTEXT
     changing
-      !CT_LINE type TLINE_T .
+      !CT_LANGTEXT type ZCHAIN_TT_LANGTEXT .
   methods SET_LANGTEXT
     importing
       !IV_EQUNR type EQUNR
@@ -153,6 +153,7 @@ private section.
   data GV_PPOSNR type CO_POSNR .
   data GV_KMATN type KMATN .
   data GT_LINE_T type TLINE_T .
+  data GT_LANGTEXT type ZCHAIN_TT_LANGTEXT .
 ENDCLASS.
 
 
@@ -238,7 +239,7 @@ ENDMETHOD.
 
   method GET_LANGTEXT.
 
-    ct_line = gt_line_t.
+    ct_langtext = gt_langtext.
 
   endmethod.
 
@@ -593,7 +594,11 @@ ENDMETHOD.
 
   METHOD set_langtext.
 
-    DATA: lv_tdname TYPE THEAD-TDNAME.
+    DATA: lt_line_t TYPE tline_t.
+
+    data: ls_langtext type ZCHAIN_S_LANGTEXT.
+
+    DATA: lv_tdname TYPE thead-tdname.
 
     lv_tdname = iv_equnr.
 
@@ -604,7 +609,11 @@ ENDMETHOD.
         iv_tdid     = 'LTXT'
         iv_tdspras  = iv_spras
       RECEIVING
-        ct_tline    = gt_line_t.
+        ct_tline    = lt_line_t.
+
+    ls_langtext-spras = iv_spras.
+    ls_langtext-LANGTEXTE[] = lt_line_t.
+    append ls_langtext to gt_langtext.
 
   ENDMETHOD.
 
