@@ -11,6 +11,11 @@ public section.
     changing
       !CV_TRANSFERRED type CHAR1
       !CV_AIN_PART type STRING .
+  methods MANUFACTURERPARTNUMBER
+    importing
+      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
+    changing
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods CREATE_SPAREPART
     importing
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
@@ -18,6 +23,13 @@ public section.
       !IV_BP_NAME type ZACO_DE_BP_AIN
     changing
       !CT_RESULT type ZACO_T_JSON_BODY .
+  methods MANUFACTURER
+    importing
+      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
+      !IV_RFCDEST type RFCDEST
+      !IV_BP_NAME type ZACO_DE_BP_AIN
+    changing
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods DELETE_SPAREPART
     importing
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
@@ -25,6 +37,11 @@ public section.
       !IV_RFCDEST type RFCDEST
     changing
       !CT_RESULT type ZACO_T_JSON_BODY .
+  methods EANNUMBER
+    importing
+      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
+    changing
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods UPDATE_SPAREPART
     importing
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
@@ -33,28 +50,6 @@ public section.
       !IV_BP_NAME type ZACO_DE_BP_AIN
     changing
       !CT_RESULT type ZACO_T_JSON_BODY .
-protected section.
-private section.
-
-  data GS_MSG type BAL_S_MSG .
-
-  methods MANUFACTURERPARTNUMBER
-    importing
-      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
-    changing
-      !CT_JSON type ZACO_T_JSON_BODY .
-  methods MANUFACTURER
-    importing
-      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
-      !IV_RFCDEST type RFCDEST
-      !IV_BP_NAME type ZACO_DE_BP_AIN
-    changing
-      !CT_JSON type ZACO_T_JSON_BODY .
-  methods EANNUMBER
-    importing
-      !IO_MATERIAL type ref to ZACO_CL_MATERIAL
-    changing
-      !CT_JSON type ZACO_T_JSON_BODY .
   methods UOM
     importing
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
@@ -175,6 +170,10 @@ private section.
       !IO_MATERIAL type ref to ZACO_CL_MATERIAL
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
+protected section.
+private section.
+
+  data GS_MSG type BAL_S_MSG .
 ENDCLASS.
 
 
@@ -754,19 +753,20 @@ METHOD GROESSE_ABMESSUNG.
 ENDMETHOD.
 
 
-method GROSSWEIGHT.
+METHOD grossweight.
 
-  data: ls_json type zaco_s_json_body.
-  data: lv_brgew type brgew.
+  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lv_brgew TYPE brgew.
 
   ls_json-name = 'grossWeight'.
-  CALL METHOD io_material->GET_BRGEW
+  CALL METHOD io_material->get_brgew
     CHANGING
       CV_BrGEW = lv_brgew.
-  ls_json-value = lv_brgew.
-  append ls_json to ct_json.
-
-endmethod.
+  IF lv_brgew > 0.
+    ls_json-value = lv_brgew.
+    APPEND ls_json TO ct_json.
+  ENDIF.
+ENDMETHOD.
 
 
 METHOD HOEHE.
@@ -952,19 +952,21 @@ method MANUFACTURERPARTNUMBER.
 endmethod.
 
 
-method NETWEIGHT.
+METHOD netweight.
 
-  data: ls_json type zaco_s_json_body.
-  data: lv_ntgew type ntgew.
+  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lv_ntgew TYPE ntgew.
 
   ls_json-name = 'netWeight'.
-  CALL METHOD io_material->GET_NETGW
+  CALL METHOD io_material->get_netgw
     CHANGING
-      CV_NTGEW = lv_ntgew.
-  ls_json-value = lv_ntgew.
-  append ls_json to ct_json.
+      cv_ntgew = lv_ntgew.
+  IF lv_ntgew > 0.
+    ls_json-value = lv_ntgew.
+    APPEND ls_json TO ct_json.
+  ENDIF.
 
-endmethod.
+ENDMETHOD.
 
 
 method SPAREPARTDESCRIPTION.
@@ -1626,7 +1628,7 @@ METHOD update_sparepart.
 ENDMETHOD.
 
 
-METHOD VOLUMEN.
+METHOD volumen.
 
   DATA: ls_json TYPE zaco_s_json_body.
   DATA: lv_volum TYPE volum.
@@ -1635,9 +1637,10 @@ METHOD VOLUMEN.
   CALL METHOD io_material->get_volum
     CHANGING
       cv_volum = lv_volum.
-
-  ls_json-value = lv_volum.
-  APPEND ls_json TO ct_json.
+  IF lv_volum > 0.
+    ls_json-value = lv_volum.
+    APPEND ls_json TO ct_json.
+  ENDIF.
 
 ENDMETHOD.
 
