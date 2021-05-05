@@ -8,10 +8,11 @@ public section.
     importing
       !IV_BP_NAME type ZACO_DE_BP_AIN
       !IV_RFCDEST type RFCDEST
+      !IV_BP_ROLE type CHAR1 default '1'
     changing
       !CV_LOGHNDL type BALLOGHNDL optional
       value(CV_BP_ID) type STRING
-      !CT_RESULT type ZACO_T_JSON_BODY .
+      !CT_RESULT type ZACO_T_JSON_BODY optional .
   methods GET_BP_AIN
     importing
       !IV_TPLNR type TPLNR
@@ -205,7 +206,7 @@ METHOD get_bp_id_by_name.
 
   ENDCASE.
 
-  CONCATENATE zaco_cl_connection_ain=>gv_service '/organizations/byrole?roleid=3' INTO lv_service.
+  CONCATENATE zaco_cl_connection_ain=>gv_service '/organizations/byrole?roleid=' iv_bp_role INTO lv_service.
   cl_http_utility=>set_request_uri( request = lo_http_client->request
                                        uri  = lv_service ).
 

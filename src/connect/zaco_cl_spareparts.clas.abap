@@ -809,6 +809,12 @@ method INTERNALID.
     CHANGING
       CV_MATNR = lv_matnr.
 
+  CALL FUNCTION 'CONVERSION_EXIT_MATN1_OUTPUT'
+    EXPORTING
+      input         = lv_matnr
+   IMPORTING
+      OUTPUT        = lv_matnr.
+
   ls_json-value = lv_matnr.
   append ls_json to ct_json.
 
@@ -937,19 +943,26 @@ METHOD MANUFACTURER.
 ENDMETHOD.
 
 
-method MANUFACTURERPARTNUMBER.
+METHOD manufacturerpartnumber.
 
-  data: ls_json type zaco_s_json_body.
-  data: lv_matnr type matnr.
+  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lv_matnr TYPE matnr.
 
   ls_json-name = 'manufacturerPartNumber'.
-  CALL METHOD io_material->GET_MATNR
+  CALL METHOD io_material->get_matnr
     CHANGING
-      CV_MATNR = lv_matnr.
-  ls_json-value = lv_matnr.
-  append ls_json to ct_json.
+      cv_matnr = lv_matnr.
 
-endmethod.
+  CALL FUNCTION 'CONVERSION_EXIT_MATN1_OUTPUT'
+    EXPORTING
+      input  = lv_matnr
+    IMPORTING
+      output = lv_matnr.
+
+  ls_json-value = lv_matnr.
+  APPEND ls_json TO ct_json.
+
+ENDMETHOD.
 
 
 METHOD netweight.
