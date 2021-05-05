@@ -3,7 +3,7 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <PROGDIR>
-    <NAME>ZACO_INITIAL_LOAD_MATERIAL</NAME>
+    <NAME>ZACO_INITIAL_LOAD_MATERIAL_STU</NAME>
     <SUBC>1</SUBC>
     <RLOAD>D</RLOAD>
     <FIXPT>X</FIXPT>
@@ -101,13 +101,6 @@
     </item>
     <item>
      <ID>S</ID>
-     <KEY>PMATNR</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>9</LENGTH>
-     <SPLIT>D</SPLIT>
-    </item>
-    <item>
-     <ID>S</ID>
      <KEY>PRFCDEST</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>23</LENGTH>
@@ -115,9 +108,23 @@
     </item>
     <item>
      <ID>S</ID>
+     <KEY>PSTLAN</KEY>
+     <ENTRY>.</ENTRY>
+     <LENGTH>24</LENGTH>
+     <SPLIT>D</SPLIT>
+    </item>
+    <item>
+     <ID>S</ID>
      <KEY>PWERKS</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>12</LENGTH>
+     <SPLIT>D</SPLIT>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>SEQUNR</KEY>
+     <ENTRY>.</ENTRY>
+     <LENGTH>17</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
    </TPOOL>
