@@ -347,6 +347,8 @@ METHOD lese_equipment.
   DATA: lv_obknr      TYPE objknr.
   DATA: lv_vbeln      TYPE vbeln.
   DATA: lv_posnr      TYPE posnr.
+  DATA: lv_kdauf      TYPE kdauf.
+  DATA: lv_kdpos      TYPE kdpos.
   DATA: lv_mapar      TYPE mapar.
   DATA: lv_paufnr     TYPE aufnr.
   DATA: lv_pposnr     TYPE co_posnr.
@@ -456,7 +458,7 @@ METHOD lese_equipment.
 
 *    ENDIF.
     SELECT SINGLE * FROM eqbs INTO ls_eqbs WHERE equnr = iv_equnr.
-    IF sy-subrc = 0.
+    IF sy-subrc = 0 AND ls_eqbs-kdauf NE space.
       CALL METHOD me->set_kdauf
         EXPORTING
           iv_kdauf = ls_eqbs-kdauf
@@ -490,19 +492,30 @@ METHOD lese_equipment.
             SELECT SINGLE projn FROM afpo INTO lv_projn WHERE aufnr = lv_paufnr
                                                          AND  posnr = lv_pposnr.
             IF sy-subrc = 0.
-              CALL FUNCTION 'CONVERSION_EXIT_ABPSP_OUTPUT'
-                EXPORTING
-                  input  = lv_projn
-                IMPORTING
-                  output = lv_projn_ext.
-              REPLACE FIRST OCCURRENCE OF '-' IN lv_projn_ext WITH ''.
-              lv_vbeln = lv_projn_ext(8).
-              CONCATENATE '00' lv_vbeln INTO lv_vbeln.
-              lv_posnr+2(4) = lv_projn_ext+14(4).
-              CALL METHOD me->set_kdauf
-                EXPORTING
-                  iv_kdauf = lv_vbeln
-                  iv_kdpos = lv_posnr.
+              IF lv_projn NE space.
+                CALL FUNCTION 'CONVERSION_EXIT_ABPSP_OUTPUT'
+                  EXPORTING
+                    input  = lv_projn
+                  IMPORTING
+                    output = lv_projn_ext.
+                REPLACE FIRST OCCURRENCE OF '-' IN lv_projn_ext WITH ''.
+                lv_vbeln = lv_projn_ext(8).
+                CONCATENATE '00' lv_vbeln INTO lv_vbeln.
+                lv_posnr+2(4) = lv_projn_ext+14(4).
+                CALL METHOD me->set_kdauf
+                  EXPORTING
+                    iv_kdauf = lv_vbeln
+                    iv_kdpos = lv_posnr.
+              ELSE.
+*----------------- Kundenauftragsbezug über Fertigungsauftrag
+                SELECT SINGLE kdauf kdpos INTO (lv_kdauf, lv_kdpos) FROM aufk WHERE aufnr = lv_paufnr.
+                IF sy-subrc = 0.
+                  CALL METHOD me->set_kdauf
+                    EXPORTING
+                      iv_kdauf = lv_kdauf
+                      iv_kdpos = lv_kdpos.
+                ENDIF.
+              ENDIF.
             ENDIF.
           ENDIF.
         ENDIF.
