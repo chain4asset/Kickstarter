@@ -124,7 +124,7 @@ endmethod.
 *-------------- Kundenauftragsstückliste
         CALL FUNCTION 'CS_BOM_EXPL_KND_V1' "Stückliste Kundenauftrag
           EXPORTING
-            capid  = 'ZP01'
+            capid  = 'SD01'               "Customizing!
             cuobj  = lv_cuobj
             datuv  = sy-datum
             emeng  = 1

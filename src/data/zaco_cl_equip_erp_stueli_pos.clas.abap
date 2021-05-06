@@ -93,7 +93,12 @@ endmethod.
 
 method GET_MATNR.
 
-  cv_matnr = gv_matnr.
+  CALL FUNCTION 'CONVERSION_EXIT_MATN1_OUTPUT'
+    EXPORTING
+      input         = gv_matnr
+   IMPORTING
+     OUTPUT        = cv_matnr.
+
 
 endmethod.
 

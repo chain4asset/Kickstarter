@@ -19,6 +19,7 @@ public section.
       !IV_ACTION type STRING
       !IV_RFCDEST type RFCDEST optional
       !IV_BP_NAME type ZACO_DE_BP_AIN
+      !IV_WERKS type WERKS_D optional
     changing
       !CT_RETURN type ZACO_T_JSON_BODY
       !CO_HTTP_CLIENT type ref to IF_HTTP_CLIENT
@@ -587,7 +588,7 @@ METHOD handle_sparepart_of_equipment.
         CALL METHOD lo_material->set_matnr
           EXPORTING
             iv_matnr = lv_matnr
-            iv_werks = '0002'.
+            iv_werks = iv_werks.
 
         CALL METHOD lo_sparepart->create_sparepart
           EXPORTING

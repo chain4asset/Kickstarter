@@ -75,9 +75,7 @@ PARAMETERS: prfcdest    TYPE rfcdest.
 
 START-OF-SELECTION.
 *---- Alle Equipments im System
-  SELECT equnr FROM eqst INTO ls_equnr-equnr WHERE equnr IN sequnr
-                                              AND  werks = pwerks
-                                              AND  stlan = pstlan.
+  SELECT equnr FROM equi INTO ls_equnr-equnr WHERE equnr IN sequnr.
     APPEND ls_equnr TO lt_equnr.
   ENDSELECT.
 
