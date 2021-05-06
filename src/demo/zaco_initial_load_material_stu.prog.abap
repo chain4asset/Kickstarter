@@ -68,6 +68,7 @@ DATA: lv_status         TYPE char1.
 SELECT-OPTIONS: sequnr  FOR eqst-equnr.
 PARAMETERS: pwerks      TYPE eqst-werks.
 PARAMETERS: pstlan      TYPE eqst-stlan.
+PARAMETERS: pstlty      TYPE stlty.
 PARAMETERS: pbpname     TYPE zaco_de_bp_ain.
 PARAMETERS: prfcdest    TYPE rfcdest.
 
@@ -150,6 +151,8 @@ END-OF-SELECTION.
           EXPORTING
             iv_equnr              = ls_equnr-equnr
             iv_werks              = pwerks
+            iv_stlty              = pstlty
+            iv_stlan              = pstlan
           EXCEPTIONS
             alt_not_found         = 1
             call_invalid          = 2

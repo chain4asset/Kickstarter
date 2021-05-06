@@ -115,6 +115,13 @@
     </item>
     <item>
      <ID>S</ID>
+     <KEY>PSTLTY</KEY>
+     <ENTRY>.</ENTRY>
+     <LENGTH>9</LENGTH>
+     <SPLIT>D</SPLIT>
+    </item>
+    <item>
+     <ID>S</ID>
      <KEY>PWERKS</KEY>
      <ENTRY>.</ENTRY>
      <LENGTH>12</LENGTH>
