@@ -4,6 +4,7 @@ class ZACO_CL_SPAREPARTS definition
 
 public section.
 
+  methods CONSTRUCTOR .
   methods SPAREPARTS_ALREADY_TRANSFERRED
     importing
       !IV_MATNR type MATNR
@@ -174,6 +175,8 @@ protected section.
 private section.
 
   data GS_MSG type BAL_S_MSG .
+  data GT_CUSTOM type ZACO_TT_OBJECTS_CU .
+  constants GC_SPAREPART type ZACO_DE_OBJEKTTYPE value 'SPAREPART' ##NO_TEXT.
 ENDCLASS.
 
 
@@ -183,41 +186,94 @@ CLASS ZACO_CL_SPAREPARTS IMPLEMENTATION.
 
 METHOD bestandsmenge.
 
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
   DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_eisbe TYPE marc-eisbe.
   DATA: lv_labst TYPE mard-labst.
   DATA: lv_dismm TYPE marc-dismm.
-*---- Idee hier den Sicherheitsbestand zu veröfentlichen !
 
-  CALL METHOD io_material->get_eisbe
-    CHANGING
-      cv_eisbe = lv_eisbe.
-
-  CALL METHOD io_material->get_labst
-    CHANGING
-      cv_labst = lv_labst.
 
   ls_json-name = 'manufacturerStockLevel'.
-  ls_json-value = lv_labst.
-  APPEND ls_json TO ct_json.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'BESTANDSMENGE'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~bestandsmenge
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_eisbe
+          CHANGING
+            cv_eisbe = lv_eisbe.
+
+        CALL METHOD io_material->get_labst
+          CHANGING
+            cv_labst = lv_labst.
+
+        ls_json-value = lv_labst.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
 
 ENDMETHOD.
 
 
-METHOD BREIT.
+METHOD breit.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_breit TYPE breit.
 
+
+
   ls_json-name = 'width'.
-  CALL METHOD io_material->get_breit
-    CHANGING
-      cv_breit = lv_breit.
-  IF lv_breit > 0.
-    ls_json-value = lv_breit.
-    APPEND ls_json TO ct_json.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'BREIT'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~breit
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_breit
+          CHANGING
+            cv_breit = lv_breit.
+        IF lv_breit > 0.
+          ls_json-value = lv_breit.
+          APPEND ls_json TO ct_json.
+        ENDIF.
+      ENDIF.
+    ENDIF.
   ENDIF.
+
 ENDMETHOD.
+
+
+  METHOD constructor.
+
+    SELECT * FROM ZACO_objects_CU APPENDING TABLE gt_custom.
+
+  ENDMETHOD.
 
 
 METHOD create_sparepart.
@@ -681,106 +737,215 @@ METHOD delete_sparepart.
 ENDMETHOD.
 
 
-METHOD DIMENSION.
+METHOD dimension.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_meins TYPE mara-meins.
   DATA: lv_uom_erp TYPE zaco_de_einheit.
   DATA: lv_uom_ain TYPE zaco_de_einheit.
   DATA: lv_dimension TYPE zaco_de_dimension.
 
-  ls_json-name = 'dimension'.
-  CALL METHOD io_material->get_meins
-    CHANGING
-      cv_meins = lv_meins.
-  lv_uom_erp = lv_meins.
-  CALL METHOD zaco_cl_templates=>translate_uom_to_ain
-    EXPORTING
-      iv_uom_erp   = lv_uom_erp
-      iv_rfcdest   = iv_rfcdest
-    CHANGING
-*     cv_loghndl   =
-      cv_uom_ain   = lv_uom_ain
-      cv_dimension = lv_dimension.
-  ls_json-value = lv_dimension.
-  APPEND ls_json TO ct_json.
 
+  ls_json-name = 'dimension'.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'DIMENSION'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~dimension
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_meins
+          CHANGING
+            cv_meins = lv_meins.
+        lv_uom_erp = lv_meins.
+        CALL METHOD zaco_cl_templates=>translate_uom_to_ain
+          EXPORTING
+            iv_uom_erp   = lv_uom_erp
+            iv_rfcdest   = iv_rfcdest
+          CHANGING
+*           cv_loghndl   =
+            cv_uom_ain   = lv_uom_ain
+            cv_dimension = lv_dimension.
+        ls_json-value = lv_dimension.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
+
+
+METHOD eannumber.
+
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+  DATA: ls_marm TYPE marm.
+
+  DATA: lv_ean TYPE ean11.
+  DATA: lv_meins TYPE meins.
+
+
+
+  ls_json-name = 'eannumber'.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'EANNUMBER'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~eannumber
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_meins
+          CHANGING
+            cv_meins = lv_meins.
+
+        CALL METHOD io_material->get_marm_for_unit
+          EXPORTING
+            iv_meinh  = lv_meins
+          CHANGING
+            cs_marm   = ls_marm
+          EXCEPTIONS
+            not_found = 1
+            OTHERS    = 2.
+        IF sy-subrc = 0.
+          ls_json-value = ls_marm-ean11.
+          APPEND ls_json TO ct_json.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
 
 ENDMETHOD.
 
 
-method EANNUMBER.
+METHOD groesse_abmessung.
 
-  data: ls_json type zaco_s_json_body.
-  data: ls_marm type marm.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
 
-  data: lv_ean type ean11.
-  data: lv_meins type meins.
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
-  ls_json-name = 'eannumber'.
-
-  CALL METHOD io_material->GET_MEINS
-    CHANGING
-      CV_MEINS = lv_meins.
-
-  CALL METHOD io_material->GET_MARM_FOR_UNIT
-    EXPORTING
-      IV_MEINH  = lv_meins
-    CHANGING
-      CS_MARM   = ls_marm
-    EXCEPTIONS
-      NOT_FOUND = 1
-      others    = 2.
-  IF SY-SUBRC = 0.
-    ls_json-value = ls_marm-ean11.
-    append ls_json to ct_json.
-  ENDIF.
-
-endmethod.
-
-
-METHOD GROESSE_ABMESSUNG.
-
-  DATA: ls_json TYPE zaco_s_json_body.
   DATA: lv_groes TYPE groes.
 
+
   ls_json-name = 'sizeDimensions'.
-  CALL METHOD io_material->get_groes
-    CHANGING
-      cv_groes = lv_groes.
-  ls_json-value = lv_groes.
-  APPEND ls_json TO ct_json.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'GROESSE_ABMESSUNG'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~groesse_abmessung
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_groes
+          CHANGING
+            cv_groes = lv_groes.
+        ls_json-value = lv_groes.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
 ENDMETHOD.
 
 
 METHOD grossweight.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_brgew TYPE brgew.
 
+
   ls_json-name = 'grossWeight'.
-  CALL METHOD io_material->get_brgew
-    CHANGING
-      CV_BrGEW = lv_brgew.
-  IF lv_brgew > 0.
-    ls_json-value = lv_brgew.
-    APPEND ls_json TO ct_json.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'GROSSWEIGHT'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        create object lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~grossweight
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_brgew
+          CHANGING
+            CV_BrGEW = lv_brgew.
+        IF lv_brgew > 0.
+          ls_json-value = lv_brgew.
+          APPEND ls_json TO ct_json.
+        ENDIF.
+      ENDIF.
+    ENDIF.
   ENDIF.
 ENDMETHOD.
 
 
-METHOD HOEHE.
+METHOD hoehe.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_hoehe TYPE hoehe.
 
+
   ls_json-name = 'height'.
-  CALL METHOD io_material->get_hoehe
-    CHANGING
-      cv_hoehe = lv_hoehe.
-  IF lv_hoehe > 0.
-    ls_json-value = lv_hoehe.
-    APPEND ls_json TO ct_json.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'HOEHE'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~hoehe
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_hoehe
+          CHANGING
+            cv_hoehe = lv_hoehe.
+        IF lv_hoehe > 0.
+          ls_json-value = lv_hoehe.
+          APPEND ls_json TO ct_json.
+        ENDIF.
+      ENDIF.
+    ENDIF.
   ENDIF.
 ENDMETHOD.
 
@@ -799,293 +964,556 @@ method ID.
 endmethod.
 
 
-method INTERNALID.
+METHOD internalid.
 
-  data: ls_json type zaco_s_json_body.
-  data: lv_matnr type matnr.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_matnr TYPE matnr.
+
 
   ls_json-name = 'sparepartInternalID'.
-  CALL METHOD io_material->GET_MATNR
-    CHANGING
-      CV_MATNR = lv_matnr.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'INTERNALID'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~internalid
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_matnr
+          CHANGING
+            cv_matnr = lv_matnr.
 
-  CALL FUNCTION 'CONVERSION_EXIT_MATN1_OUTPUT'
-    EXPORTING
-      input         = lv_matnr
-   IMPORTING
-      OUTPUT        = lv_matnr.
+        CALL FUNCTION 'CONVERSION_EXIT_MATN1_OUTPUT'
+          EXPORTING
+            input  = lv_matnr
+          IMPORTING
+            output = lv_matnr.
 
-  ls_json-value = lv_matnr.
-  append ls_json to ct_json.
-
-endmethod.
-
-
-METHOD LAENGE.
-
-  DATA: ls_json TYPE zaco_s_json_body.
-  DATA: lv_laeng TYPE laeng.
-
-  ls_json-name = 'length'.
-  CALL METHOD io_material->get_laeng
-    CHANGING
-      cv_laeng = lv_laeng.
-  IF lv_laeng > 0.
-    ls_json-value = lv_laeng.
-    APPEND ls_json TO ct_json.
+        ls_json-value = lv_matnr.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
   ENDIF.
 ENDMETHOD.
 
 
-method LEADTIMEDURATION.
+METHOD laenge.
 
-  data: ls_json type zaco_s_json_body.
-  data: lv_plifz type marc-plifz.
-  data: lv_gwbz  type marc-wzeit.
-  data: lv_beskz type marc-beskz.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_laeng TYPE laeng.
+
+
+  ls_json-name = 'length'.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'LAENGE'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~laenge
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_laeng
+          CHANGING
+            cv_laeng = lv_laeng.
+        IF lv_laeng > 0.
+          ls_json-value = lv_laeng.
+          APPEND ls_json TO ct_json.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.
+
+
+METHOD leadtimeduration.
+
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_plifz TYPE marc-plifz.
+  DATA: lv_gwbz  TYPE marc-wzeit.
+  DATA: lv_beskz TYPE marc-beskz.
+
 
   ls_json-name = 'leadTimeDuration'.
-  CALL METHOD io_material->GET_BESKZ
-    CHANGING
-      CV_BESKZ = lv_beskz.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'LEADTIMEDURATION'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~leadtimeduration
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_beskz
+          CHANGING
+            cv_beskz = lv_beskz.
 
-  case lv_beskz.
-    when 'E'.
-      CALL METHOD io_material->GET_WBZ
-        RECEIVING
-          CV_WZEIT = lv_gwbz.
-      ls_json-value = lv_gwbz.
-    when 'F'.
-      CALL METHOD io_material->GET_PLIFZ
-        CHANGING
-          CV_PLIFZ = lv_plifz.
-      ls_json-value = lv_plifz.
-  endcase.
-  append ls_json to ct_json.
+        CASE lv_beskz.
+          WHEN 'E'.
+            CALL METHOD io_material->get_wbz
+              RECEIVING
+                cv_wzeit = lv_gwbz.
+            ls_json-value = lv_gwbz.
+          WHEN 'F'.
+            CALL METHOD io_material->get_plifz
+              CHANGING
+                cv_plifz = lv_plifz.
+            ls_json-value = lv_plifz.
+        ENDCASE.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.
 
 
-endmethod.
+METHOD leadtimedurationunit.
 
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
 
-method LEADTIMEDURATIONUNIT.
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
-  data: ls_json type zaco_s_json_body.
 
   ls_json-name = 'leadTimeDurationUnit'.
-  ls_json-value = '3'.                   "Tage
-  append ls_json to ct_json.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'LEADTIMEDURATIONUNIT'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~leadtimedurationunit
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        ls_json-name = 'leadTimeDurationUnit'.
+        ls_json-value = '3'.                   "Tage
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
 
-endmethod.
 
+METHOD longdescription.
 
-method LONGDESCRIPTION.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
 
-*  data: lt_text type tline_tab.
-*
-*  data: ls_tline type tline.
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
-  data: ls_json type zaco_s_json_body.
-*  data: lv_text type string.
-  data: lv_maktx type maktx.
-  data: lv_normt type normt.
-  data: lv_wrkst type wrkst.
+  DATA: lv_maktx TYPE maktx.
+  DATA: lv_normt TYPE normt.
+  DATA: lv_wrkst TYPE wrkst.
 
   ls_json-name = 'longDescription'.
-*  CALL METHOD io_material->GET_GRUTXT
-*    CHANGING
-*      CT_GRUTXT = lt_text.
-*
-*  loop at lt_text into ls_tline.
-*    concatenate lv_text ls_tline '\n' into lv_text.
-*  endloop.
-*  ls_json-value = lv_text.
-  CALL METHOD io_material->GET_KTXT
-    RECEIVING
-      CV_MAKTX = lv_maktx.
-  CALL METHOD io_material->GET_NORMT
-    CHANGING
-      CV_NORMT = lv_normt.
-
-  CALL METHOD io_material->GET_WRKST
-    CHANGING
-      CV_WRKST = lv_wrkst.
-  concatenate lv_maktx lv_normt lv_wrkst into ls_json-value SEPARATED BY space.
-
   ls_json-parent = 'sparepartDescription'.
-  append ls_json to ct_json.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'LONGDESCRIPTION'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~longdescription
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_ktxt
+          RECEIVING
+            cv_maktx = lv_maktx.
+        CALL METHOD io_material->get_normt
+          CHANGING
+            cv_normt = lv_normt.
 
-endmethod.
+        CALL METHOD io_material->get_wrkst
+          CHANGING
+            cv_wrkst = lv_wrkst.
+        CONCATENATE lv_maktx lv_normt lv_wrkst INTO ls_json-value SEPARATED BY space.
+
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
 
 
-METHOD MANUFACTURER.
+METHOD manufacturer.
 
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
   DATA: lo_bp_ain TYPE REF TO zaco_cl_business_partner_ain.
 
   DATA: lt_result TYPE zaco_t_json_body.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
-  CREATE OBJECT lo_bp_ain.
+  DATA: lv_maktx TYPE maktx.
+  DATA: lv_normt TYPE normt.
+  DATA: lv_wrkst TYPE wrkst.
 
   ls_json-name = 'manufacturer'.
 
-  CALL METHOD lo_bp_ain->get_bp_id_by_name
-    EXPORTING
-      iv_bp_name = iv_bp_name              "'NETZSCH_PS'
-      iv_rfcdest = iv_rfcdest
-    CHANGING
-*     cv_loghndl =
-      cv_bp_id   = ls_json-value
-      ct_result  = lt_result.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'MANUFACTURER'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~manufacturer
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CREATE OBJECT lo_bp_ain.
 
-  APPEND ls_json TO ct_json.
+        ls_json-name = 'manufacturer'.
 
+        CALL METHOD lo_bp_ain->get_bp_id_by_name
+          EXPORTING
+            iv_bp_name = iv_bp_name              "'NETZSCH_PS'
+            iv_rfcdest = iv_rfcdest
+          CHANGING
+*           cv_loghndl =
+            cv_bp_id   = ls_json-value
+            ct_result  = lt_result.
+
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
 ENDMETHOD.
 
 
 METHOD manufacturerpartnumber.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_matnr TYPE matnr.
 
   ls_json-name = 'manufacturerPartNumber'.
-  CALL METHOD io_material->get_matnr
-    CHANGING
-      cv_matnr = lv_matnr.
 
-  CALL FUNCTION 'CONVERSION_EXIT_MATN1_OUTPUT'
-    EXPORTING
-      input  = lv_matnr
-    IMPORTING
-      output = lv_matnr.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'MANUFACTURERPARTNUMBER'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~manufacturerpartnumber
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_matnr
+          CHANGING
+            cv_matnr = lv_matnr.
 
-  ls_json-value = lv_matnr.
-  APPEND ls_json TO ct_json.
+        CALL FUNCTION 'CONVERSION_EXIT_MATN1_OUTPUT'
+          EXPORTING
+            input  = lv_matnr
+          IMPORTING
+            output = lv_matnr.
 
+        ls_json-value = lv_matnr.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
 ENDMETHOD.
 
 
 METHOD netweight.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_ntgew TYPE ntgew.
 
   ls_json-name = 'netWeight'.
-  CALL METHOD io_material->get_netgw
-    CHANGING
-      cv_ntgew = lv_ntgew.
-  IF lv_ntgew > 0.
-    ls_json-value = lv_ntgew.
-    APPEND ls_json TO ct_json.
+
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'NETWEIGHT'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~netweight
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_netgw
+          CHANGING
+            cv_ntgew = lv_ntgew.
+        IF lv_ntgew > 0.
+          ls_json-value = lv_ntgew.
+          APPEND ls_json TO ct_json.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
+
+
+METHOD sparepartdescription.
+
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_maktx TYPE maktx.
+  DATA: lv_normt TYPE normt.
+  DATA: lv_wrkst TYPE wrkst.
+
+  ls_json-name = 'sparepartDescription'.
+  ls_json-parent = ls_json-name.
+
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'SPAREPARTDESCRIPTION'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~sparepartdescription
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_ktxt
+          RECEIVING
+            cv_maktx = lv_maktx.
+
+        ls_json-value = lv_maktx.
+        APPEND ls_json TO ct_json.
+
+      ENDIF.
+    ENDIF.
   ENDIF.
 
 ENDMETHOD.
 
 
-method SPAREPARTDESCRIPTION.
+METHOD sparepartdescription_langu.
 
-  data: ls_json type zaco_s_json_body.
-  data: lv_maktx type maktx.
-  data: lv_normt type normt.
-  data: lv_wrkst type wrkst.
-
-  ls_json-name = 'sparepartDescription'.
-  CALL METHOD io_material->GET_KTXT
-    RECEIVING
-      CV_MAKTX = lv_maktx.
-*  CALL METHOD io_material->GET_NORMT
-*    CHANGING
-*      CV_NORMT = lv_normt.
-*
-*  CALL METHOD io_material->GET_WRKST
-*    CHANGING
-*      CV_WRKST = lv_wrkst.
-*  concatenate lv_maktx lv_normt lv_wrkst into ls_json-value SEPARATED BY space.
-  ls_json-value = lv_maktx.
-  ls_json-parent = ls_json-name.
-  append ls_json to ct_json.
-
-endmethod.
-
-
-METHOD SPAREPARTDESCRIPTION_LANGU.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
 
   DATA: lt_maktx TYPE makt_tab.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
   DATA: ls_maktx TYPE makt.
 
-  DATA: lv_normt TYPE normt.
-  DATA: lv_wrkst TYPE wrkst.
+  DATA: lv_maktx TYPE maktx.
   DATA: lv_langu TYPE char2.
 
-  CALL METHOD io_material->get_makt
-    CHANGING
-      ct_makt = lt_maktx.
+  ls_json-name = 'sparepartDescription'.
+  ls_json-parent = ls_json-name.
 
-  LOOP AT lt_maktx INTO ls_maktx where spras ne '1'.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'SPAREPARTDESCRIPTION'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      CALL METHOD io_material->get_makt
+        CHANGING
+          ct_makt = lt_maktx.
 
-    ls_json-name = 'sparepartDescription'.
-    ls_json-parent = 'sparepartDescriptions'.
-    ls_json-multiple = 'X'.
-    ls_json-multiple_body = 'X'.
-    ls_json-next = 'X'.
-    ls_json-value = ls_maktx-maktx.
-    APPEND ls_json TO ct_json.
+      READ TABLE lt_maktx INTO ls_maktx WITH KEY spras = ls_cust-constant.
+      IF sy-subrc = 0.
 
-    CLEAR ls_json.
+        ls_json-name = 'sparepartDescription'.
+        ls_json-parent = 'sparepartDescriptions'.
+        ls_json-multiple = 'X'.
+        ls_json-multiple_body = 'X'.
+        ls_json-next = 'X'.
+        ls_json-value = ls_maktx-maktx.
+        APPEND ls_json TO ct_json.
 
-    CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
-      EXPORTING
-        input  = ls_maktx-spras
-      IMPORTING
-        output = lv_langu.
+        CLEAR ls_json.
 
-    translate lv_langu to lower case.
-    ls_json-name = 'longDescription'.
-    ls_json-parent = 'sparepartDescriptions'.
-    ls_json-value = ls_maktx-maktx..
-    ls_json-multiple_body = 'X'.
-    APPEND ls_json TO ct_json.
+        CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
+          EXPORTING
+            input  = ls_cust-constant
+          IMPORTING
+            output = lv_langu.
 
-    CLEAR ls_json.
+        TRANSLATE lv_langu TO LOWER CASE.
+        ls_json-name = 'longDescription'.
+        ls_json-parent = 'sparepartDescriptions'.
+        ls_json-value = ls_maktx-maktx..
+        ls_json-multiple_body = 'X'.
+        APPEND ls_json TO ct_json.
 
-    ls_json-name = 'languageISoCode'.
-    ls_json-parent = 'sparepartDescriptions'.
-    ls_json-value = lv_langu.
-    ls_json-multiple_body = 'X'.
-    ls_json-last = 'X'.
-    APPEND ls_json TO ct_json.
+        CLEAR ls_json.
 
-    CLEAR ls_json.
+        ls_json-name = 'languageISoCode'.
+        ls_json-parent = 'sparepartDescriptions'.
+        ls_json-value = ls_cust-constant.
+        ls_json-multiple_body = 'X'.
+        ls_json-last = 'X'.
+        APPEND ls_json TO ct_json.
 
-  ENDLOOP.
+        CLEAR ls_json.
+
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~sparepartdescription
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_makt
+          CHANGING
+            ct_makt = lt_maktx.
+
+        LOOP AT lt_maktx INTO ls_maktx WHERE spras NE '1'.
+
+          ls_json-name = 'sparepartDescription'.
+          ls_json-parent = 'sparepartDescriptions'.
+          ls_json-multiple = 'X'.
+          ls_json-multiple_body = 'X'.
+          ls_json-next = 'X'.
+          ls_json-value = ls_maktx-maktx.
+          APPEND ls_json TO ct_json.
+
+          CLEAR ls_json.
+
+          CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
+            EXPORTING
+              input  = ls_maktx-spras
+            IMPORTING
+              output = lv_langu.
+
+          TRANSLATE lv_langu TO LOWER CASE.
+          ls_json-name = 'longDescription'.
+          ls_json-parent = 'sparepartDescriptions'.
+          ls_json-value = ls_maktx-maktx..
+          ls_json-multiple_body = 'X'.
+          APPEND ls_json TO ct_json.
+
+          CLEAR ls_json.
+
+          ls_json-name = 'languageISoCode'.
+          ls_json-parent = 'sparepartDescriptions'.
+          ls_json-value = lv_langu.
+          ls_json-multiple_body = 'X'.
+          ls_json-last = 'X'.
+          APPEND ls_json TO ct_json.
+
+          CLEAR ls_json.
+
+        ENDLOOP.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
 ENDMETHOD.
 
 
-method SPAREPARTNAME.
+METHOD sparepartname.
 
-  data: ls_json type zaco_s_json_body.
-  data: lv_maktx type maktx.
-  data: lv_normt type normt.
-  data: lv_wrkst type wrkst.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_maktx TYPE maktx.
+  DATA: lv_normt TYPE normt.
+  DATA: lv_wrkst TYPE wrkst.
 
   ls_json-name = 'sparepartName'.
-  CALL METHOD io_material->GET_KTXT
-    RECEIVING
-      CV_MAKTX = lv_maktx.
-  CALL METHOD io_material->GET_NORMT
-    CHANGING
-      CV_NORMT = lv_normt.
+  ls_json-parent = 'sparepartDescription'.
 
-  CALL METHOD io_material->GET_WRKST
-    CHANGING
-      CV_WRKST = lv_wrkst.
-  concatenate lv_maktx lv_normt lv_wrkst into ls_json-value SEPARATED BY space.
-    ls_json-parent = 'sparepartDescription'.
-  append ls_json to ct_json.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'SPAREPARTNAME'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~sparepartname
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_ktxt
+          RECEIVING
+            cv_maktx = lv_maktx.
+        CALL METHOD io_material->get_normt
+          CHANGING
+            cv_normt = lv_normt.
 
-endmethod.
+        CALL METHOD io_material->get_wrkst
+          CHANGING
+            cv_wrkst = lv_wrkst.
+        CONCATENATE lv_maktx lv_normt lv_wrkst INTO ls_json-value SEPARATED BY space.
+
+        APPEND ls_json TO ct_json.
+
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.
 
 
 method SPAREPARTS.
@@ -1247,84 +1675,155 @@ METHOD spareparts_already_transferred.
 ENDMETHOD.
 
 
-method SUBCLASS.
+METHOD subclass.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_maktx TYPE maktx.
+  DATA: lv_normt TYPE normt.
+  DATA: lv_wrkst TYPE wrkst.
+
   ls_json-name = 'subClass'.
-  ls_json-value = 'C72A865B6302447FA109D97AAFDA05DE'.   "'A43F6328772B43D183345AF1FB7A0B96'.
-  append ls_json to ct_json.
+
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'SUBCLASS'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~subclass
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+*        ls_json-value = 'C72A865B6302447FA109D97AAFDA05DE'.   "'A43F6328772B43D183345AF1FB7A0B96'.
+*        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.
 
 
-endmethod.
+METHOD uom.
 
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
 
-METHOD UOM.
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
-  DATA: ls_json TYPE zaco_s_json_body.
   DATA: lv_meins TYPE mara-meins.
   DATA: lv_uom_erp TYPE zaco_de_einheit.
   DATA: lv_uom_ain TYPE zaco_de_einheit.
   DATA: lv_dimension TYPE zaco_de_dimension.
 
   ls_json-name = 'uom'.
-  CALL METHOD io_material->get_meins
-    CHANGING
-      cv_meins = lv_meins.
-  CASE lv_meins.
-    WHEN 'ST'.
-      lv_meins = 'PC'.
-  ENDCASE.
-  lv_uom_erp = lv_meins.
-  CALL METHOD zaco_cl_templates=>translate_uom_to_ain
-    EXPORTING
-      iv_uom_erp   = lv_uom_erp
-      iv_rfcdest   = iv_rfcdest
-    CHANGING
-*     cv_loghndl   =
-      cv_uom_ain   = lv_uom_ain
-      cv_dimension = lv_dimension.
-  ls_json-value = lv_uom_ain.
-  APPEND ls_json TO ct_json.
 
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'UOM'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~uom
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_meins
+          CHANGING
+            cv_meins = lv_meins.
+        CASE lv_meins.
+          WHEN 'ST'.
+            lv_meins = 'PC'.
+        ENDCASE.
+        lv_uom_erp = lv_meins.
+        CALL METHOD zaco_cl_templates=>translate_uom_to_ain
+          EXPORTING
+            iv_uom_erp   = lv_uom_erp
+            iv_rfcdest   = iv_rfcdest
+          CHANGING
+*           cv_loghndl   =
+            cv_uom_ain   = lv_uom_ain
+            cv_dimension = lv_dimension.
+        ls_json-value = lv_uom_ain.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
 
 
 ENDMETHOD.
 
 
-METHOD UOM_LENGTH_WIDTH_HEIGHT.
+METHOD uom_length_width_height.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_meabm TYPE marm-meabm.
   DATA: lv_uom_erp TYPE zaco_de_einheit.
   DATA: lv_uom_ain TYPE zaco_de_einheit.
   DATA: lv_dimension TYPE zaco_de_dimension.
 
   ls_json-name = 'unitOfLengthWidthHeight'.
-  CALL METHOD io_material->get_meabm
-    CHANGING
-      cv_meabm = lv_meabm.
 
-  CHECK lv_meabm NE space.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'UOM_LENGTH_WIDTH_HEIGHT'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~uom_length_width_height
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_meabm
+          CHANGING
+            cv_meabm = lv_meabm.
 
-  lv_uom_erp = lv_meabm.
-  CALL METHOD zaco_cl_templates=>translate_uom_to_ain
-    EXPORTING
-      iv_rfcdest   = iv_rfcdest
-      iv_uom_erp   = lv_uom_erp
-    CHANGING
-*     cv_loghndl   =
-      cv_uom_ain   = lv_uom_ain
-      cv_dimension = lv_dimension.
-  ls_json-value = lv_uom_ain.
-  APPEND ls_json TO ct_json.
+        CHECK lv_meabm NE space.
 
+        lv_uom_erp = lv_meabm.
+        CALL METHOD zaco_cl_templates=>translate_uom_to_ain
+          EXPORTING
+            iv_rfcdest   = iv_rfcdest
+            iv_uom_erp   = lv_uom_erp
+          CHANGING
+*           cv_loghndl   =
+            cv_uom_ain   = lv_uom_ain
+            cv_dimension = lv_dimension.
+        ls_json-value = lv_uom_ain.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
 
 ENDMETHOD.
 
 
-METHOD UOM_VOLUMEN.
+METHOD uom_volumen.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_voleh TYPE voleh.
   DATA: lv_uom_erp TYPE zaco_de_einheit.
   DATA: lv_uom_ain TYPE zaco_de_einheit.
@@ -1332,22 +1831,39 @@ METHOD UOM_VOLUMEN.
 
   ls_json-name = 'volumeUnit'.
 
-  CALL METHOD io_material->get_voleh
-    CHANGING
-      cv_voleh = lv_voleh.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'UOM_VOLUMEN'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~uom_volumen
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_voleh
+          CHANGING
+            cv_voleh = lv_voleh.
 
-  lv_uom_erp = lv_voleh.
-  CALL METHOD zaco_cl_templates=>translate_uom_to_ain
-    EXPORTING
-      iv_uom_erp   = lv_uom_erp
-      iv_rfcdest  = iv_rfcdest
-    CHANGING
-*     cv_loghndl   =
-      cv_uom_ain   = lv_uom_ain
-      cv_dimension = lv_dimension.
-  ls_json-value = lv_uom_ain.
-  APPEND ls_json TO ct_json.
+        lv_uom_erp = lv_voleh.
+        CALL METHOD zaco_cl_templates=>translate_uom_to_ain
+          EXPORTING
+            iv_uom_erp   = lv_uom_erp
+            iv_rfcdest   = iv_rfcdest
+          CHANGING
+*           cv_loghndl   =
+            cv_uom_ain   = lv_uom_ain
+            cv_dimension = lv_dimension.
+        ls_json-value = lv_uom_ain.
+        APPEND ls_json TO ct_json.
 
+      ENDIF.
+    ENDIF.
+  ENDIF.
 
 ENDMETHOD.
 
@@ -1643,46 +2159,87 @@ ENDMETHOD.
 
 METHOD volumen.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_volum TYPE volum.
 
   ls_json-name = 'volume'.
-  CALL METHOD io_material->get_volum
-    CHANGING
-      cv_volum = lv_volum.
-  IF lv_volum > 0.
-    ls_json-value = lv_volum.
-    APPEND ls_json TO ct_json.
-  ENDIF.
 
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'VOLUMEN'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~volumen
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_volum
+          CHANGING
+            cv_volum = lv_volum.
+        IF lv_volum > 0.
+          ls_json-value = lv_volum.
+          APPEND ls_json TO ct_json.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
 ENDMETHOD.
 
 
-METHOD WEIGHTUNIT.
+METHOD weightunit.
 
-  DATA: ls_json TYPE zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
   DATA: lv_gewei TYPE mara-gewei.
   DATA: lv_uom_erp TYPE zaco_de_einheit.
   DATA: lv_uom_ain TYPE zaco_de_einheit.
   DATA: lv_dimension TYPE zaco_de_dimension.
 
-
   ls_json-name = 'weightUnit'.
-  CALL METHOD io_material->get_gewei
-    CHANGING
-      cv_gewei = lv_gewei.
 
-  lv_uom_erp = lv_gewei.
-  CALL METHOD zaco_cl_templates=>translate_uom_to_ain
-    EXPORTING
-      iv_uom_erp   = lv_uom_erp
-      iv_rfcdest   = iv_rfcdest
-    CHANGING
-*     cv_loghndl   =
-      cv_uom_ain   = lv_uom_ain
-      cv_dimension = lv_dimension.
-  ls_json-value = lv_uom_ain.
-  APPEND ls_json TO ct_json.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+                                             fieldname  = 'WEIGHTUNIT'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart~weightunit
+          EXPORTING
+            io_object = io_material
+            ct_json   = ct_json.
+      ELSE.
+        CALL METHOD io_material->get_gewei
+          CHANGING
+            cv_gewei = lv_gewei.
 
+        lv_uom_erp = lv_gewei.
+        CALL METHOD zaco_cl_templates=>translate_uom_to_ain
+          EXPORTING
+            iv_uom_erp   = lv_uom_erp
+            iv_rfcdest   = iv_rfcdest
+          CHANGING
+*           cv_loghndl   =
+            cv_uom_ain   = lv_uom_ain
+            cv_dimension = lv_dimension.
+        ls_json-value = lv_uom_ain.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
 ENDMETHOD.
 ENDCLASS.

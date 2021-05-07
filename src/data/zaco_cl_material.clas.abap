@@ -757,7 +757,7 @@ METHOD get_wbz_std.
 *----------------------------------------------------------------------*
 * Ersteller: Diemer_B
 * Datum:   24.05.2018
-* Projekt: NPS PLUS
+*
 *----------------------------------------------------------------------*
 * Änderungsvermerk:
 * Wer: Diemer_B       Wann: 24.05.2018  Was: Ermittlung GWBZ
