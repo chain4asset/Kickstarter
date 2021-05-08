@@ -209,6 +209,7 @@ METHOD bestandsmenge.
         CALL METHOD lo_exit->zchain_if_sparepart~bestandsmenge
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_eisbe
@@ -253,6 +254,7 @@ METHOD breit.
         CALL METHOD lo_exit->zchain_if_sparepart~breit
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_breit
@@ -410,6 +412,13 @@ METHOD create_sparepart.
       iv_rfcdest  = iv_rfcdest
     CHANGING
       ct_json     = lt_json.
+
+  CALL METHOD me->eannumber
+    EXPORTING
+      io_material = io_material
+    CHANGING
+      ct_json     = lt_json.
+
 
   CALL METHOD zaco_cl_connection_ain=>connect_to_ain
     EXPORTING
@@ -764,6 +773,7 @@ METHOD dimension.
         CALL METHOD lo_exit->zchain_if_sparepart~dimension
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_meins
@@ -812,6 +822,7 @@ METHOD eannumber.
         CALL METHOD lo_exit->zchain_if_sparepart~eannumber
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_meins
@@ -860,6 +871,7 @@ METHOD groesse_abmessung.
         CALL METHOD lo_exit->zchain_if_sparepart~groesse_abmessung
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_groes
@@ -893,10 +905,11 @@ METHOD grossweight.
       APPEND ls_json TO ct_json.
     ELSE.
       IF ls_cust-use_userexit = 'J'.
-        create object lo_exit.
+        CREATE OBJECT lo_exit.
         CALL METHOD lo_exit->zchain_if_sparepart~grossweight
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_brgew
@@ -935,6 +948,7 @@ METHOD hoehe.
         CALL METHOD lo_exit->zchain_if_sparepart~hoehe
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_hoehe
@@ -987,6 +1001,7 @@ METHOD internalid.
         CALL METHOD lo_exit->zchain_if_sparepart~internalid
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_matnr
@@ -1030,6 +1045,7 @@ METHOD laenge.
         CALL METHOD lo_exit->zchain_if_sparepart~laenge
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_laeng
@@ -1071,6 +1087,7 @@ METHOD leadtimeduration.
         CALL METHOD lo_exit->zchain_if_sparepart~leadtimeduration
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_beskz
@@ -1118,6 +1135,7 @@ METHOD leadtimedurationunit.
         CALL METHOD lo_exit->zchain_if_sparepart~leadtimedurationunit
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         ls_json-name = 'leadTimeDurationUnit'.
@@ -1154,6 +1172,7 @@ METHOD longdescription.
         CALL METHOD lo_exit->zchain_if_sparepart~longdescription
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_ktxt
@@ -1203,6 +1222,7 @@ METHOD manufacturer.
         CALL METHOD lo_exit->zchain_if_sparepart~manufacturer
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CREATE OBJECT lo_bp_ain.
@@ -1248,6 +1268,7 @@ METHOD manufacturerpartnumber.
         CALL METHOD lo_exit->zchain_if_sparepart~manufacturerpartnumber
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_matnr
@@ -1291,6 +1312,7 @@ METHOD netweight.
         CALL METHOD lo_exit->zchain_if_sparepart~netweight
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_netgw
@@ -1332,6 +1354,7 @@ METHOD sparepartdescription.
         CALL METHOD lo_exit->zchain_if_sparepart~sparepartdescription
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_ktxt
@@ -1417,6 +1440,7 @@ METHOD sparepartdescription_langu.
         CALL METHOD lo_exit->zchain_if_sparepart~sparepartdescription
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_makt
@@ -1493,6 +1517,7 @@ METHOD sparepartname.
         CALL METHOD lo_exit->zchain_if_sparepart~sparepartname
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_ktxt
@@ -1700,6 +1725,7 @@ METHOD subclass.
         CALL METHOD lo_exit->zchain_if_sparepart~subclass
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
 *        ls_json-value = 'C72A865B6302447FA109D97AAFDA05DE'.   "'A43F6328772B43D183345AF1FB7A0B96'.
@@ -1737,6 +1763,7 @@ METHOD uom.
         CALL METHOD lo_exit->zchain_if_sparepart~uom
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_meins
@@ -1791,6 +1818,7 @@ METHOD uom_length_width_height.
         CALL METHOD lo_exit->zchain_if_sparepart~uom_length_width_height
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_meabm
@@ -1843,6 +1871,7 @@ METHOD uom_volumen.
         CALL METHOD lo_exit->zchain_if_sparepart~uom_volumen
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_voleh
@@ -2077,6 +2106,12 @@ METHOD update_sparepart.
     CHANGING
       ct_json = lt_json.
 
+  CALL METHOD me->eannumber
+    EXPORTING
+      io_material = io_material
+    CHANGING
+      ct_json     = lt_json.
+
   CALL METHOD zaco_cl_connection_ain=>construct_body_mat_langu
     EXPORTING
       it_body = lt_json
@@ -2180,6 +2215,7 @@ METHOD volumen.
         CALL METHOD lo_exit->zchain_if_sparepart~volumen
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_volum
@@ -2221,6 +2257,7 @@ METHOD weightunit.
         CALL METHOD lo_exit->zchain_if_sparepart~weightunit
           EXPORTING
             io_object = io_material
+          CHANGING
             ct_json   = ct_json.
       ELSE.
         CALL METHOD io_material->get_gewei

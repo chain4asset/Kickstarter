@@ -4,6 +4,7 @@ class ZACO_CL_SPAREPARTS_MANAGEMENT definition
 
 public section.
 
+  methods CONSTRUCTOR .
   methods HAS_EQUIPMENT_SPAREPARTS
     importing
       !IV_EQUI_AIN type STRING
@@ -40,6 +41,8 @@ private section.
 
   data GS_LOG type BAL_S_LOG .
   data GS_MSG type BAL_S_MSG .
+  data GT_CUSTOM type ZACO_TT_OBJECTS_CU .
+  constants GC_SPAREPART_HANDLE type ZACO_DE_OBJEKTTYPE value 'BOM' ##NO_TEXT.
 
   methods ASSIGHNEEID
     importing
@@ -59,36 +62,43 @@ private section.
   methods QUANTITY
     importing
       !IV_QUANTITY type KMPMG
+      !IO_STUELI_POS type ref to ZACO_CL_EQUIP_ERP_STUELI_POS
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
   methods OPERATIONQUANTITY
     importing
       !IV_QUANTITY type KMPMG
+      !IO_STUELI_POS type ref to ZACO_CL_EQUIP_ERP_STUELI_POS
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
   methods COMMISSIONINGQUANTITY
     importing
       !IV_QUANTITY type KMPMG
+      !IO_STUELI_POS type ref to ZACO_CL_EQUIP_ERP_STUELI_POS
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
   methods INITIALQUANTITY
     importing
       !IV_QUANTITY type KMPMG
+      !IO_STUELI_POS type ref to ZACO_CL_EQUIP_ERP_STUELI_POS
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
   methods ADVISEDSTOCKQUANTITY
     importing
       !IV_QUANTITY type KMPMG
+      !IO_STUELI_POS type ref to ZACO_CL_EQUIP_ERP_STUELI_POS
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
   methods BOMQUANTITY
     importing
       !IV_QUANTITY type KMPMG
+      !IO_STUELI_POS type ref to ZACO_CL_EQUIP_ERP_STUELI_POS
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
   methods ADDITIONALINFO
     importing
       !IV_INFO type STRING
+      !IO_STUELI_POS type ref to ZACO_CL_EQUIP_ERP_STUELI_POS
     changing
       !CT_JSON type ZACO_T_JSON_BODY .
 ENDCLASS.
@@ -98,63 +108,191 @@ ENDCLASS.
 CLASS ZACO_CL_SPAREPARTS_MANAGEMENT IMPLEMENTATION.
 
 
-method ADDITIONALINFO.
+METHOD additionalinfo.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_input TYPE string.
+  DATA: lv_eisbe TYPE marc-eisbe.
+  DATA: lv_labst TYPE mard-labst.
+  DATA: lv_dismm TYPE marc-dismm.
+
 
   ls_json-name = 'additionalInfo'.
-  ls_json-value = iv_info.
   ls_json-parent = 'partAssignments'.
-  append ls_json to ct_json.
+  lv_input = iv_info.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'ADDITIONALINFO'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~additionalinfo
+          EXPORTING
+            iv_input      = lv_input
+            io_stueli_pos = io_stueli_pos
+          CHANGING
+            ct_json       = ct_json.
+      ELSE.
+        ls_json-value = lv_input.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
 
-endmethod.
 
+METHOD advisedstockquantity.
 
-method ADVISEDSTOCKQUANTITY.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
   ls_json-name = 'advisedStockQuantity'.
-  ls_json-value = iv_quantity.
   ls_json-parent = 'partAssignments'.
-  append ls_json to ct_json.
 
-endmethod.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'ADVISEDSTOCKQUANTITY'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~advisedstockquantity
+          EXPORTING
+            iv_input      = iv_quantity
+            io_stueli_pos = io_stueli_pos
+          CHANGING
+            ct_json       = ct_json.
+      ELSE.
+        ls_json-value = iv_quantity.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.
 
 
-method ASSIGHNEEID.
+METHOD assighneeid.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_input TYPE string.
 
   ls_json-name = 'assigneeID'.
-  ls_json-value = iv_asigneeid.
-  append ls_json to ct_json.
+  lv_input = iv_asigneeid.
 
-endmethod.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'ASSIGHNEEID'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~assighneeid
+          EXPORTING
+            iv_input = lv_input
+          CHANGING
+            ct_json  = ct_json.
+      ELSE.
+        ls_json-value = lv_input.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.
 
 
-method BOMQUANTITY.
+METHOD bomquantity.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
   ls_json-name = 'bomQuantity'.
-  ls_json-value = iv_quantity.
   ls_json-parent = 'partAssignments'.
-  append ls_json to ct_json.
 
-endmethod.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'BOMQUANTITY'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~bomquantity
+          EXPORTING
+            iv_input      = iv_quantity
+            io_stueli_pos = io_stueli_pos
+          CHANGING
+            ct_json       = ct_json.
+      ELSE.
+        ls_json-value = iv_quantity.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.
 
 
-method COMMISSIONINGQUANTITY.
+METHOD commissioningquantity.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
   ls_json-name = 'commissioningQuantity'.
-  ls_json-value = iv_quantity.
   ls_json-parent = 'partAssignments'.
-  append ls_json to ct_json.
 
-endmethod.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'COMMISSIONINGQUANTITY'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~commissioningquantity
+          EXPORTING
+            iv_input      = iv_quantity
+            io_stueli_pos = io_stueli_pos
+          CHANGING
+            ct_json       = ct_json.
+      ELSE.
+        ls_json-value = iv_quantity.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
+
+
+  method CONSTRUCTOR.
+
+        SELECT * FROM ZACO_objects_CU APPENDING TABLE gt_custom.
+
+  endmethod.
 
 
 METHOD delete_sparepart_assignment.
@@ -695,39 +833,45 @@ METHOD handle_sparepart_of_equipment.
 
         CALL METHOD me->quantity
           EXPORTING
-            iv_quantity = '0'
+            iv_quantity   = '0'
+            io_stueli_pos = lo_stueli_pos
           CHANGING
-            ct_json     = lt_json.
+            ct_json       = lt_json.
 
-*        CALL METHOD me->OPERATIONQUANTITY
-*          EXPORTING
-*            IV_QUANTITY = lv_menge
-*          CHANGING
-*            CT_JSON     = lt_json.
+        CALL METHOD me->operationquantity
+          EXPORTING
+            iv_quantity   = '0'
+            io_stueli_pos = lo_stueli_pos
+          CHANGING
+            ct_json       = lt_json.
 
         CALL METHOD me->bomquantity
           EXPORTING
-            iv_quantity = lv_menge
+            iv_quantity   = lv_menge
+            io_stueli_pos = lo_stueli_pos
           CHANGING
-            ct_json     = lt_json.
+            ct_json       = lt_json.
 
         CALL METHOD me->commissioningquantity
           EXPORTING
-            iv_quantity = '0'       "Vorerst festwert
+            iv_quantity   = '0'       "Vorerst festwert
+            io_stueli_pos = lo_stueli_pos
           CHANGING
-            ct_json     = lt_json.
+            ct_json       = lt_json.
 
         CALL METHOD me->initialquantity
           EXPORTING
-            iv_quantity = '0'
+            iv_quantity   = '0'
+            io_stueli_pos = lo_stueli_pos
           CHANGING
-            ct_json     = lt_json.
+            ct_json       = lt_json.
 
         CALL METHOD me->advisedstockquantity
           EXPORTING
-            iv_quantity = '0'
+            iv_quantity   = '0'
+            io_stueli_pos = lo_stueli_pos
           CHANGING
-            ct_json     = lt_json.
+            ct_json       = lt_json.
 
         CALL METHOD lo_stueli_pos->get_posnr
           CHANGING
@@ -737,6 +881,7 @@ METHOD handle_sparepart_of_equipment.
         CALL METHOD me->additionalinfo
           EXPORTING
             iv_info = lv_info              "Zeichnungspositionsnummer
+            io_stueli_pos = lo_stueli_pos
           CHANGING
             ct_json = lt_json.
 
@@ -968,64 +1113,179 @@ METHOD has_equipment_spareparts.
 ENDMETHOD.
 
 
-method INITIALQUANTITY.
+METHOD initialquantity.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
   ls_json-name = 'initialQuantity'.
-  ls_json-value = iv_quantity.
   ls_json-parent = 'partAssignments'.
-  append ls_json to ct_json.
 
-endmethod.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'INITIALQUANTITY'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~initialquantity
+          EXPORTING
+            iv_input      = iv_quantity
+            io_stueli_pos = io_stueli_pos
+          CHANGING
+            ct_json       = ct_json.
+      ELSE.
+        ls_json-value = iv_quantity.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
 
 
-method OPERATIONQUANTITY.
+METHOD operationquantity.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
 
   ls_json-name = 'operationQuantity'.
-  ls_json-value = iv_quantity.
   ls_json-parent = 'partAssignments'.
-  append ls_json to ct_json.
 
-endmethod.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'OPERATIONQUANTITY'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~operationquantity
+          EXPORTING
+            iv_input      = iv_quantity
+            io_stueli_pos = io_stueli_pos
+          CHANGING
+            ct_json       = ct_json.
+      ELSE.
+        ls_json-value = iv_quantity.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
 
 
-method OPERATION_TYPE.
+METHOD operation_type.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_input TYPE string.
 
   ls_json-name = 'operation'.
-  ls_json-value = iv_operation.
-  append ls_json to ct_json.
+  lv_input = iv_operation.
 
-endmethod.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'OPERATION_TYPE'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~operation_type
+          EXPORTING
+            iv_input = lv_input
+          CHANGING
+            ct_json  = ct_json.
+      ELSE.
+        ls_json-value = lv_input.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
 
 
-method PARTID.
+METHOD partid.
 
-  data: ls_json type zaco_s_json_body.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
+
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_input TYPE string.
 
   ls_json-name = 'partID'.
-  ls_json-value = iv_partid.
   ls_json-parent = 'partAssignments'.
   ls_json-multiple = 'X'.
-  append ls_json to ct_json.
+  lv_input = iv_partid.
 
-endmethod.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'PARTID'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~partid
+          EXPORTING
+            iv_input = lv_input
+          CHANGING
+            ct_json  = ct_json.
+      ELSE.
+        ls_json-value = lv_input.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
 
 
-method QUANTITY.
+METHOD quantity.
 
-  data: ls_json type zaco_s_json_body.
-  data: iv_temp type string.
+  DATA: lo_exit  TYPE REF TO zchain_cl_sparep_handle_exit.
 
-  move iv_quantity to iv_temp.
+  DATA: ls_json  TYPE zaco_s_json_body.
+  DATA: ls_cust  TYPE zaco_objects_cu.
+
+  DATA: lv_input TYPE string.
+
   ls_json-name = 'quantity'.
-  ls_json-value = iv_temp.
   ls_json-parent = 'partAssignments'.
-  append ls_json to Ct_json.
+  lv_input = iv_quantity.
 
-endmethod.
+  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart_handle
+                                             fieldname  = 'QUANTITY'.
+  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+    IF ls_cust-useconstant = 'J'.
+      ls_json-value = ls_cust-constant.
+      APPEND ls_json TO ct_json.
+    ELSE.
+      IF ls_cust-use_userexit = 'J'.
+        CREATE OBJECT lo_exit.
+        CALL METHOD lo_exit->zchain_if_sparepart_handle~quantity
+          EXPORTING
+            iv_input      = lv_input
+            io_stueli_pos = io_stueli_pos
+          CHANGING
+            ct_json       = ct_json.
+      ELSE.
+        ls_json-value = lv_input.
+        APPEND ls_json TO ct_json.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDMETHOD.
 ENDCLASS.
