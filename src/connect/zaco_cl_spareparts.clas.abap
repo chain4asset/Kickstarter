@@ -1221,9 +1221,10 @@ METHOD manufacturer.
         CREATE OBJECT lo_exit.
         CALL METHOD lo_exit->zchain_if_sparepart~manufacturer
           EXPORTING
-            io_object = io_material
+            io_object  = io_material
+            iv_rfcdest = iv_rfcdest
           CHANGING
-            ct_json   = ct_json.
+            ct_json    = ct_json.
       ELSE.
         CREATE OBJECT lo_bp_ain.
 
@@ -1853,6 +1854,7 @@ METHOD uom_volumen.
   DATA: ls_cust  TYPE zaco_objects_cu.
 
   DATA: lv_voleh TYPE voleh.
+  DATA: lv_volum TYPE volum.
   DATA: lv_uom_erp TYPE zaco_de_einheit.
   DATA: lv_uom_ain TYPE zaco_de_einheit.
   DATA: lv_dimension TYPE zaco_de_dimension.
@@ -1874,22 +1876,26 @@ METHOD uom_volumen.
           CHANGING
             ct_json   = ct_json.
       ELSE.
-        CALL METHOD io_material->get_voleh
+        CALL METHOD io_material->get_volum
           CHANGING
-            cv_voleh = lv_voleh.
+            cv_volum = lv_volum.
+        IF lv_volum > 0.
+          CALL METHOD io_material->get_voleh
+            CHANGING
+              cv_voleh = lv_voleh.
 
-        lv_uom_erp = lv_voleh.
-        CALL METHOD zaco_cl_templates=>translate_uom_to_ain
-          EXPORTING
-            iv_uom_erp   = lv_uom_erp
-            iv_rfcdest   = iv_rfcdest
-          CHANGING
-*           cv_loghndl   =
-            cv_uom_ain   = lv_uom_ain
-            cv_dimension = lv_dimension.
-        ls_json-value = lv_uom_ain.
-        APPEND ls_json TO ct_json.
-
+          lv_uom_erp = lv_voleh.
+          CALL METHOD zaco_cl_templates=>translate_uom_to_ain
+            EXPORTING
+              iv_uom_erp   = lv_uom_erp
+              iv_rfcdest   = iv_rfcdest
+            CHANGING
+*             cv_loghndl   =
+              cv_uom_ain   = lv_uom_ain
+              cv_dimension = lv_dimension.
+          ls_json-value = lv_uom_ain.
+          APPEND ls_json TO ct_json.
+        ENDIF.
       ENDIF.
     ENDIF.
   ENDIF.

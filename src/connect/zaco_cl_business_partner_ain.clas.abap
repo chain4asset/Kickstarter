@@ -254,7 +254,7 @@ METHOD get_bp_id_by_name.
   IF cv_bp_id = space.
     gs_msg-msgid = 'ZACO'.
     gs_msg-msgty = 'E'.
-    gs_msg-msgno = '221'.
+    gs_msg-msgno = '202'.
     gs_msg-msgv1 = iv_bp_name.
     lv_json  = lv_json.
     CALL METHOD zaco_cl_error_log=>write_error

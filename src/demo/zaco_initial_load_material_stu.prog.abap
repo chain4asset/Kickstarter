@@ -182,7 +182,7 @@ END-OF-SELECTION.
 
         LOOP AT lt_position INTO ls_position.
           lo_equi_stue_pos ?= ls_position-lo_position.
-          CALL METHOD lo_equi_stue_pos->get_matnr
+          CALL METHOD lo_equi_stue_pos->get_matnr_intern
             CHANGING
               cv_matnr = lv_matnr.
           CALL METHOD lo_equi_stue_pos->get_werks

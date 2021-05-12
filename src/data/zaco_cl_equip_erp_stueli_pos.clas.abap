@@ -64,6 +64,9 @@ public section.
   methods GET_ERSKZ
     changing
       !CV_ERSKZ type ERSKZ .
+  methods GET_MATNR_INTERN
+    changing
+      value(CV_MATNR) type MATNR .
 protected section.
 private section.
 
@@ -98,6 +101,14 @@ method GET_MATNR.
       input         = gv_matnr
    IMPORTING
      OUTPUT        = cv_matnr.
+
+
+endmethod.
+
+
+method GET_MATNR_INTERN.
+
+ cv_matnr = gv_matnr.
 
 
 endmethod.

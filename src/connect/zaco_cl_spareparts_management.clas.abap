@@ -618,6 +618,7 @@ METHOD handle_sparepart_of_equipment.
   DATA: lv_equnr        TYPE equnr.
   DATA: lv_ok           TYPE char1.
   DATA: lv_matnr        TYPE matnr.
+  DATA: lv_matnr_intern TYPE matnr.
   DATA: lv_erskz        TYPE erskz.
   DATA: lv_matid        TYPE string.
   DATA: lv_menge        TYPE kmpmg.
@@ -639,6 +640,10 @@ METHOD handle_sparepart_of_equipment.
 
     lo_stueli_pos ?= ls_stueli-lo_position.
     REFRESH lt_json.
+
+    CALL METHOD lo_stueli_pos->get_matnr_intern
+      CHANGING
+        cv_matnr = lv_matnr_intern.
 
     CALL METHOD lo_stueli_pos->get_matnr
       CHANGING
@@ -725,7 +730,7 @@ METHOD handle_sparepart_of_equipment.
         CREATE OBJECT lo_material.
         CALL METHOD lo_material->set_matnr
           EXPORTING
-            iv_matnr = lv_matnr
+            iv_matnr = lv_matnr_intern
             iv_werks = iv_werks.
 
         CALL METHOD lo_sparepart->create_sparepart
