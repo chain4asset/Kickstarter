@@ -19,6 +19,16 @@ public section.
   methods ADD_EXTERNAL_ID
     importing
       !IS_EXT_ID type ZACO_S_EXTERNAL_ID .
+  methods FIND_EXTERNAL_ID
+    importing
+      !IV_RFCDEST type RFCDEST
+      !IV_EXTERNAL_ID type STRING
+      !IV_SYSTEMNAME type STRING
+    changing
+      !CV_OK type CHAR1
+      !CS_EXTERNAL_ID type ZACO_S_EXTERNAL_ID_OBJECTS
+    exceptions
+      NO_DATA .
 protected section.
 private section.
 
@@ -92,6 +102,172 @@ METHOD EXTERNAL_OBJECT_TYPE.
   ls_json-value = iv_object_type.
   ls_json-parent = 'IDMappings'.
   APPEND ls_json TO ct_json.
+
+ENDMETHOD.
+
+
+METHOD FIND_EXTERNAL_ID.
+
+  DATA: lo_http_client  TYPE REF TO if_http_client.
+
+  data: lt_ext_ids      type ZACO_TT_EXTERNAL_ID_OBJECTS.
+  DATA: ls_ext_ids      TYPE ZACO_S_EXTERNAL_ID_OBJECTS.
+
+  DATA: lv_body         TYPE string.
+  DATA: lv_service      TYPE string.
+  DATA: lv_status_code  TYPE i.
+  DATA: lv_reason       TYPE string.
+  DATA: lv_json         TYPE string.
+  data: lv_equnr        type equnr.
+
+*https://ain.cfapps.eu10.hana.ondemand.com/ain/services/api/v1/objectsid/ainobjects(D8418936)
+
+  CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+    EXPORTING
+      iv_rfcdest               = iv_rfcdest
+    CHANGING
+      co_http_client           = lo_http_client
+    EXCEPTIONS
+      dest_not_found           = 1
+      destination_no_authority = 2
+      OTHERS                   = 3.
+  CASE sy-subrc.
+    WHEN '1'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '001'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '2'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '002'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '3'.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '003'.
+      gs_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'DEST'.
+
+  ENDCASE.
+
+*https://ain.cfapps.eu10.hana.ondemand.com/ain/services/api/v1/objectsid/ainobjects(D8418936)
+*-----------------------------------------------------------------------
+* Set Request URI
+*-----------------------------------------------------------------------
+    CONCATENATE zaco_cl_connection_ain=>gv_service '/objectsid/ainobjects(' iv_external_id ')' INTO lv_service.
+    cl_http_utility=>set_request_uri( request = lo_http_client->request
+                                         uri  = lv_service ).
+
+    lo_http_client->request->set_method( 'GET' ).
+    lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+    lo_http_client->request->set_cdata( lv_body ).
+**-----------------------------------------------------------------------
+** Send Request and Receive Response
+**-----------------------------------------------------------------------
+    lo_http_client->send(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      http_invalid_timeout       = 4
+      OTHERS                     = 5 ).
+
+    lo_http_client->receive(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      OTHERS                     = 4 ).
+
+    lo_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                    reason = lv_reason ).
+
+    lv_json = lo_http_client->response->get_cdata( ).
+    IF lv_status_code = '200'.
+
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'S'.
+      gs_msg-msgno = '301'.
+      gs_msg-msgv1 = iv_external_id.
+      lv_json  = lv_json.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'EQUI'.
+
+     CALL METHOD /ui2/cl_json=>deserialize
+      EXPORTING
+        json        = lv_json
+*       jsonx       =
+        pretty_name = /ui2/cl_json=>pretty_mode-camel_case
+*       assoc_arrays     = C_BOOL-FALSE
+*       assoc_arrays_opt = C_BOOL-FALSE
+*       name_mappings    =
+      CHANGING
+        data        = lt_ext_ids.
+      read table lt_ext_ids into cs_external_id with key systemname = iv_systemname.
+      if sy-subrc = 0.
+        cv_ok = 'X'.
+      endif.
+    ELSE.
+      gs_msg-msgid = 'ZACO'.
+      gs_msg-msgty = 'E'.
+      gs_msg-msgno = '302'.
+      gs_msg-msgv1 = iv_external_id.
+      lv_json  = lv_json.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = gs_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = lv_equnr
+          iv_msgno     = gs_msg-msgno
+          iv_msgid     = gs_msg-msgid
+          iv_msgv1     = gs_msg-msgv1
+          iv_err_group = 'EQUI'.
+      cv_ok = space.
+    ENDIF.
+
+    lo_http_client->close( ).
+    CLEAR lv_json.
+    CLEAR lv_service.
+*  ELSE.
+*    RAISE no_data.
+*  ENDIF.
 
 ENDMETHOD.
 
