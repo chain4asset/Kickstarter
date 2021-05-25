@@ -120,7 +120,6 @@ METHOD FIND_EXTERNAL_ID.
   DATA: lv_json         TYPE string.
   data: lv_equnr        type equnr.
 
-*https://ain.cfapps.eu10.hana.ondemand.com/ain/services/api/v1/objectsid/ainobjects(D8418936)
 
   CALL METHOD zaco_cl_connection_ain=>connect_to_ain
     EXPORTING
@@ -180,7 +179,6 @@ METHOD FIND_EXTERNAL_ID.
 
   ENDCASE.
 
-*https://ain.cfapps.eu10.hana.ondemand.com/ain/services/api/v1/objectsid/ainobjects(D8418936)
 *-----------------------------------------------------------------------
 * Set Request URI
 *-----------------------------------------------------------------------

@@ -54,6 +54,12 @@ public section.
     changing
       !CO_HTTP_CLIENT type ref to IF_HTTP_CLIENT
       !CV_OAUTH_TOKEN type STRING .
+  class-methods CONNECT_TO_AIN_LOG
+    importing
+      !IV_RFCDEST type RFCDEST optional
+      !IV_EQUNR type EQUNR optional
+    changing
+      !CO_HTTP_CLIENT type ref to IF_HTTP_CLIENT .
 protected section.
 private section.
 ENDCLASS.
@@ -203,6 +209,72 @@ METHOD connect_to_ain.
   ENDIF.
 
 
+
+ENDMETHOD.
+
+
+METHOD connect_to_ain_log.
+
+  data: ls_msg  type BAL_S_MSG.
+  DATA: lv_json TYPE string.
+
+  CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+    EXPORTING
+      iv_rfcdest               = iv_rfcdest
+    CHANGING
+      co_http_client           = co_http_client
+    EXCEPTIONS
+      dest_not_found           = 1
+      destination_no_authority = 2
+      OTHERS                   = 3.
+  CASE sy-subrc.
+    WHEN '1'.
+      ls_msg-msgid = 'ZACO'.
+      ls_msg-msgty = 'E'.
+      ls_msg-msgno = '001'.
+      ls_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = ls_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = iv_equnr
+          iv_msgno     = ls_msg-msgno
+          iv_msgid     = ls_msg-msgid
+          iv_msgv1     = ls_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '2'.
+      ls_msg-msgid = 'ZACO'.
+      ls_msg-msgty = 'E'.
+      ls_msg-msgno = '002'.
+      ls_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = ls_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = iv_equnr
+          iv_msgno     = ls_msg-msgno
+          iv_msgid     = ls_msg-msgid
+          iv_msgv1     = ls_msg-msgv1
+          iv_err_group = 'DEST'.
+    WHEN '3'.
+      ls_msg-msgid = 'ZACO'.
+      ls_msg-msgty = 'E'.
+      ls_msg-msgno = '003'.
+      ls_msg-msgv1 = iv_rfcdest.
+      lv_json  = iv_rfcdest.
+      CALL METHOD zaco_cl_error_log=>write_error
+        EXPORTING
+          iv_msgty     = ls_msg-msgty
+          iv_json      = lv_json
+          iv_equnr     = iv_equnr
+          iv_msgno     = ls_msg-msgno
+          iv_msgid     = ls_msg-msgid
+          iv_msgv1     = ls_msg-msgv1
+          iv_err_group = 'DEST'.
+
+  ENDCASE.
 
 ENDMETHOD.
 
