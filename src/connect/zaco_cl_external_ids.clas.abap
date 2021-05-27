@@ -29,6 +29,14 @@ public section.
       !CS_EXTERNAL_ID type ZACO_S_EXTERNAL_ID_OBJECTS
     exceptions
       NO_DATA .
+  methods GET_SYSTEM_ID
+    importing
+      !IV_RFCDEST type RFCDEST
+      !IV_SYNAME type SYST-SYSID
+    changing
+      !CV_SYSTEMID type ZACO_DE_EXTERN_SYSTEM_ID
+    exceptions
+      NOT_FOUND .
 protected section.
 private section.
 
@@ -270,6 +278,84 @@ METHOD FIND_EXTERNAL_ID.
 ENDMETHOD.
 
 
+  METHOD get_system_id.
+
+    DATA: lo_http_client TYPE REF TO if_http_client.
+
+    DATA: lt_systeme_det  TYPE zaco_tt_systems_detail.
+
+    DATA: ls_systeme      TYPE zaco_s_systems.
+    DATA: ls_systeme_det  TYPE ZACO_s_SYSTEMS_DETAIL.
+
+    DATA: lv_filter       TYPE string.
+    DATA: lv_service      TYPE string.
+    DATA: lv_status_code  TYPE i.
+    DATA: lv_reason       TYPE string.
+    DATA: lv_json         TYPE string.
+    DATA: lv_length       TYPE i.
+    DATA: lv_idx          TYPE sy-tabix.
+    DATA: lv_clientx      TYPE sy-tabix.
+
+    CLEAR cv_systemid.
+
+    CALL METHOD zaco_cl_connection_ain=>connect_to_ain_log
+      EXPORTING
+        iv_rfcdest     = iv_rfcdest
+      CHANGING
+        co_http_client = lo_http_client.
+
+
+    lv_filter = |/external/systems|.         "'Equipment Template' and name eq '|.
+
+    CONCATENATE zaco_cl_connection_ain=>gv_service lv_filter INTO lv_service.
+
+    cl_http_utility=>set_request_uri( request = lo_http_client->request
+                                      uri  = lv_service ).
+
+    lo_http_client->request->set_method( 'GET' ).
+
+*-----------------------------------------------------------------------
+* Send Request and Receive Response
+*-----------------------------------------------------------------------
+    lo_http_client->send(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      http_invalid_timeout       = 4
+      OTHERS                     = 5 ).
+
+    lo_http_client->receive(
+      EXCEPTIONS
+      http_communication_failure = 1
+      http_invalid_state         = 2
+      http_processing_failed     = 3
+      OTHERS                     = 4 ).
+
+    lo_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                    reason = lv_reason ).
+
+    IF lv_status_code EQ '200'.
+      lv_json = lo_http_client->response->get_cdata( ).
+      CALL METHOD /ui2/cl_json=>deserialize
+        EXPORTING
+          json        = lv_json
+          pretty_name = /ui2/cl_json=>pretty_mode-camel_case
+        CHANGING
+          data        = ls_systeme.
+      lt_systeme_det[] = ls_systeme-systems[].
+      READ TABLE lt_systeme_det INTO ls_systeme_det WITH KEY systemname = iv_syname.
+      IF sy-subrc = 0.
+        cv_systemid = ls_systeme_det-id.
+      ELSE.
+        RAISE not_found.
+      ENDIF.
+    ENDIF.
+
+
+  ENDMETHOD.
+
+
 METHOD IS_PRIMARY.
 
   DATA: ls_json TYPE zaco_s_json_body.
@@ -321,64 +407,13 @@ METHOD set_external_ids.
   DATA: lv_status_code  TYPE i.
   DATA: lv_reason       TYPE string.
   DATA: lv_json         TYPE string.
+  data: lv_syname       type sy-sysid.
 
-  CALL METHOD zaco_cl_connection_ain=>connect_to_ain
+  CALL METHOD zaco_cl_connection_ain=>connect_to_ain_log
     EXPORTING
       iv_rfcdest               = iv_rfcdest
     CHANGING
-      co_http_client           = lo_http_client
-    EXCEPTIONS
-      dest_not_found           = 1
-      destination_no_authority = 2
-      OTHERS                   = 3.
-  CASE sy-subrc.
-    WHEN '1'.
-      gs_msg-msgid = 'ZACO'.
-      gs_msg-msgty = 'E'.
-      gs_msg-msgno = '001'.
-      gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
-      CALL METHOD zaco_cl_error_log=>write_error
-        EXPORTING
-          iv_msgty     = gs_msg-msgty
-          iv_json      = lv_json
-          iv_equnr     = lv_equnr
-          iv_msgno     = gs_msg-msgno
-          iv_msgid     = gs_msg-msgid
-          iv_msgv1     = gs_msg-msgv1
-          iv_err_group = 'DEST'.
-    WHEN '2'.
-      gs_msg-msgid = 'ZACO'.
-      gs_msg-msgty = 'E'.
-      gs_msg-msgno = '002'.
-      gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
-      CALL METHOD zaco_cl_error_log=>write_error
-        EXPORTING
-          iv_msgty     = gs_msg-msgty
-          iv_json      = lv_json
-          iv_equnr     = lv_equnr
-          iv_msgno     = gs_msg-msgno
-          iv_msgid     = gs_msg-msgid
-          iv_msgv1     = gs_msg-msgv1
-          iv_err_group = 'DEST'.
-    WHEN '3'.
-      gs_msg-msgid = 'ZACO'.
-      gs_msg-msgty = 'E'.
-      gs_msg-msgno = '003'.
-      gs_msg-msgv1 = iv_rfcdest.
-      lv_json  = iv_rfcdest.
-      CALL METHOD zaco_cl_error_log=>write_error
-        EXPORTING
-          iv_msgty     = gs_msg-msgty
-          iv_json      = lv_json
-          iv_equnr     = lv_equnr
-          iv_msgno     = gs_msg-msgno
-          iv_msgid     = gs_msg-msgid
-          iv_msgv1     = gs_msg-msgv1
-          iv_err_group = 'DEST'.
-
-  ENDCASE.
+      co_http_client           = lo_http_client.
 
   CALL METHOD me->object_type
     EXPORTING
@@ -395,6 +430,21 @@ METHOD set_external_ids.
   DESCRIBE TABLE gt_ext_ids LINES lv_zaehl.
   IF lv_zaehl > 0.
     LOOP AT gt_ext_ids INTO ls_ext_ids WHERE object_type = iv_object_type.
+     lv_syname =  ls_ext_ids-system_id.
+     CALL METHOD me->get_system_id
+        EXPORTING
+          iv_rfcdest  = iv_rfcdest
+          iv_syname   = lv_syname
+        CHANGING
+          cv_systemid = ls_ext_ids-system_id
+        EXCEPTIONS
+         not_found   = 1
+         others      = 2
+        .
+      IF sy-subrc <> 0.
+*       Implement suitable error handling here
+      ENDIF.
+
       CALL METHOD me->system_id
         EXPORTING
           iv_system_id = ls_ext_ids-system_id
@@ -457,7 +507,7 @@ METHOD set_external_ids.
                                                     reason = lv_reason ).
 
     lv_json = lo_http_client->response->get_cdata( ).
-    IF lv_status_code = '200'.
+    IF lv_status_code >= '200' and lv_status_code < '400' .
       gs_msg-msgid = 'ZACO'.
       gs_msg-msgty = 'S'.
       gs_msg-msgno = '301'.

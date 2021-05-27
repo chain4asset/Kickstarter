@@ -22,6 +22,9 @@ public section.
       NO_PLANT_DATA
       NO_SUITABLE_BOM_FOUND
       OTHER_ERROR .
+  methods SET_POSITIONEN
+    importing
+      !IT_POSITIONEN type ZACO_TT_EQUI_STUELI_POS .
 protected section.
 private section.
 
@@ -187,6 +190,13 @@ endmethod.
 
     ENDLOOP.
 
+
+  ENDMETHOD.
+
+
+  METHOD SET_POSITIONEN.
+
+    gt_position[] = it_positionen[].
 
   ENDMETHOD.
 ENDCLASS.
