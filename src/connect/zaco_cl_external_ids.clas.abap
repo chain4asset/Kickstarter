@@ -521,7 +521,7 @@ METHOD set_external_ids.
           iv_msgno     = gs_msg-msgno
           iv_msgid     = gs_msg-msgid
           iv_msgv1     = gs_msg-msgv1
-          iv_err_group = 'EQUI'.
+          iv_err_group = 'SYST'.
     ELSE.
       gs_msg-msgid = 'ZACO'.
       gs_msg-msgty = 'E'.
@@ -536,7 +536,7 @@ METHOD set_external_ids.
           iv_msgno     = gs_msg-msgno
           iv_msgid     = gs_msg-msgid
           iv_msgv1     = gs_msg-msgv1
-          iv_err_group = 'EQUI'.
+          iv_err_group = 'SYST'.
 
     ENDIF.
     CALL METHOD zaco_cl_json=>json_to_data
