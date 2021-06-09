@@ -27,6 +27,11 @@ public section.
       !IV_KUNNR type KUNNR
     changing
       !CV_BWA_ON type CHAR1 default SPACE .
+  methods GET_BP_NAME_FOR_KUNNR
+    importing
+      !IV_KUNNR type KUNNR
+    changing
+      !CV_BP_NAME type ZACO_DE_BP_AIN .
 protected section.
 private section.
 
@@ -268,6 +273,57 @@ METHOD get_bp_id_by_name.
         iv_err_group = 'BusPa'.
   ENDIF.
   CALL METHOD lo_http_client->close( ).
+
+ENDMETHOD.
+
+
+METHOD GET_BP_NAME_FOR_KUNNR.
+*---------------------------------------------------------------------------*
+*
+*    Copyright (C) 2019 NETZSCH Pumps and Systems GmbH
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*
+*    NETZSCH Pumpen & Systeme GmbH
+*    Geretsrieder Straße 1
+*    84478 Waldkraiburg
+*    Germany
+*
+*    aconn@nedgex.com
+*
+*---------------------------------------------------------------------------*
+
+  DATA: lv_equnr TYPE equnr.  "für log
+  DATA: lv_json  TYPE string. "für log
+
+  SELECT SINGLE bp_ain FROM zaco_busi_par INTO cv_bp_name WHERE kunnr = iv_kunnr.
+  IF sy-subrc <> 0.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'I'.
+    gs_msg-msgno = '201'.
+    gs_msg-msgv1 = iv_kunnr.
+    lv_json  = space.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'BusPa'.
+  ENDIF.
 
 ENDMETHOD.
 

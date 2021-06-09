@@ -3,7 +3,7 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <DEVC>
-    <CTEXT>ACONN connect AIN API</CTEXT>
+    <CTEXT>CHAIN connect AIN API</CTEXT>
    </DEVC>
   </asx:values>
  </asx:abap>

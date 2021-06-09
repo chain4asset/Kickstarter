@@ -5,7 +5,7 @@
    <VSEOCLASS>
     <CLSNAME>ZACO_CL_PRINT_TO_PDF</CLSNAME>
     <LANGU>D</LANGU>
-    <DESCRIPT>Print smartform into pdf</DESCRIPT>
+    <DESCRIPT>Print smartform into pdf (Obsolete)</DESCRIPT>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>

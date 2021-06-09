@@ -1,6 +1,5 @@
 class ZACO_CL_TEXT_READ definition
   public
-  final
   create public .
 
 public section.
