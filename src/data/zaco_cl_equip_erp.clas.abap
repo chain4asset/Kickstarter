@@ -130,6 +130,12 @@ public section.
     importing
       !IV_EQUNR type EQUNR
       !IV_SPRAS type SPRAS .
+  methods GET_CHARGE
+    changing
+      !IC_CHARGE type CHARG_D .
+  methods SET_CHARGE
+    importing
+      !IV_CHARGE type CHARG_D .
 protected section.
 private section.
 
@@ -154,6 +160,7 @@ private section.
   data GV_KMATN type KMATN .
   data GT_LINE_T type TLINE_T .
   data GT_LANGTEXT type ZCHAIN_TT_LANGTEXT .
+  data GV_CHARGE type CHARG_D .
 ENDCLASS.
 
 
@@ -178,6 +185,13 @@ endmethod.
 method GET_BAUMM.
 
   ic_baumm = gv_baumm.
+
+endmethod.
+
+
+method GET_CHARGE.
+
+  ic_charge = gv_charge.
 
 endmethod.
 
@@ -407,6 +421,10 @@ METHOD lese_equipment.
       EXPORTING
         iv_kmatn = ls_equi-kmatn.
 
+        CALL METHOD me->set_charge
+      EXPORTING
+        iv_charge = ls_equi-charge.
+
     IF iv_spras = space.
       lv_fallb = sy-langu.
       SELECT SINGLE eqktx FROM eqkt INTO lv_eqktx WHERE equnr = ls_equi-equnr
@@ -561,6 +579,13 @@ method SET_BAUMM.
   gv_baumm = iv_baumm.
 
 endmethod.
+
+
+METHOD SET_CHARGE.
+
+  gv_charge = iv_charge.
+
+ENDMETHOD.
 
 
 method SET_EQUNR.
