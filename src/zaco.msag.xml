@@ -412,6 +412,18 @@
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
+     <MSGNR>305</MSGNR>
+     <TEXT>Erzeugen der Baseline für Equipment &amp;1 fehlgeschlagen!</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>306</MSGNR>
+     <TEXT>Baseline konnte für Equipment &amp;1 angelegt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
      <MSGNR>400</MSGNR>
      <TEXT>*-------------------- Material</TEXT>
     </T100>
