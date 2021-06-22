@@ -382,6 +382,12 @@
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
+     <MSGNR>203</MSGNR>
+     <TEXT>Für AIN Business Partner kein template in ZCHAINECL_CUTEMP.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
      <MSGNR>300</MSGNR>
      <TEXT>*------------ Equipment Part II</TEXT>
     </T100>
