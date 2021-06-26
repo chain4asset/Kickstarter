@@ -478,6 +478,12 @@
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
+     <MSGNR>408</MSGNR>
+     <TEXT>Material konnte in AIN nicht gefunden werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
      <MSGNR>500</MSGNR>
      <TEXT>*--------- Dokumente</TEXT>
     </T100>
