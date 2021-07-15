@@ -388,6 +388,18 @@
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
+     <MSGNR>204</MSGNR>
+     <TEXT>Externe Organisation für &amp;1 konnte nicht angelegt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>205</MSGNR>
+     <TEXT>Externe Organisation konnte für &amp;1 angelegt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
      <MSGNR>300</MSGNR>
      <TEXT>*------------ Equipment Part II</TEXT>
     </T100>
