@@ -400,6 +400,18 @@
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
+     <MSGNR>206</MSGNR>
+     <TEXT>Externe Organisation für &amp;1 konnte nicht geändert werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>207</MSGNR>
+     <TEXT>Externe Organisation für &amp;1 wurde geändert.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
      <MSGNR>300</MSGNR>
      <TEXT>*------------ Equipment Part II</TEXT>
     </T100>
@@ -504,6 +516,60 @@
      <ARBGB>ZACO</ARBGB>
      <MSGNR>512</MSGNR>
      <TEXT>Das Produktdatenblatt konnte für &amp;1 angelegt werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>600</MSGNR>
+     <TEXT>*--------------- Technische Plätze /AIN Location</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>601</MSGNR>
+     <TEXT>Technische Platznummer &amp;1 existiert nicht.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>602</MSGNR>
+     <TEXT>Adressermittlung zu &amp;1 löste Parameter fehler aus.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>603</MSGNR>
+     <TEXT>Adressermittlung zu &amp;1 und Adressnummer &amp;2 schlug fehl</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>604</MSGNR>
+     <TEXT>Allgemeiner Fehler bei Adressnummer &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>605</MSGNR>
+     <TEXT>Adresse zu &amp;1 und Adressnummer &amp;2 ist blockiert</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>700</MSGNR>
+     <TEXT>*-----------------------Business Partner</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>701</MSGNR>
+     <TEXT>Die Adresse des Partners &amp;1 aus Equipment &amp;2 konnte nicht gelesen werden</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>702</MSGNR>
+     <TEXT>Keine Partner anEquipment &amp;1 ermittelbar.</TEXT>
     </T100>
    </T100>
    <LONGTEXTS>

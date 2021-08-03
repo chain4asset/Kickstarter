@@ -407,13 +407,13 @@ METHOD set_external_ids.
   DATA: lv_status_code  TYPE i.
   DATA: lv_reason       TYPE string.
   DATA: lv_json         TYPE string.
-  data: lv_syname       type sy-sysid.
+  DATA: lv_syname       TYPE sy-sysid.
 
   CALL METHOD zaco_cl_connection_ain=>connect_to_ain_log
     EXPORTING
-      iv_rfcdest               = iv_rfcdest
+      iv_rfcdest     = iv_rfcdest
     CHANGING
-      co_http_client           = lo_http_client.
+      co_http_client = lo_http_client.
 
   CALL METHOD me->object_type
     EXPORTING
@@ -430,17 +430,16 @@ METHOD set_external_ids.
   DESCRIBE TABLE gt_ext_ids LINES lv_zaehl.
   IF lv_zaehl > 0.
     LOOP AT gt_ext_ids INTO ls_ext_ids WHERE object_type = iv_object_type.
-     lv_syname =  ls_ext_ids-system_id.
-     CALL METHOD me->get_system_id
+      lv_syname =  ls_ext_ids-system_id.
+      CALL METHOD me->get_system_id
         EXPORTING
           iv_rfcdest  = iv_rfcdest
           iv_syname   = lv_syname
         CHANGING
           cv_systemid = ls_ext_ids-system_id
         EXCEPTIONS
-         not_found   = 1
-         others      = 2
-        .
+          not_found   = 1
+          OTHERS      = 2.
       IF sy-subrc <> 0.
 *       Implement suitable error handling here
       ENDIF.
@@ -463,12 +462,19 @@ METHOD set_external_ids.
         CHANGING
           ct_json       = lt_json.
 
-      CALL METHOD me->external_object_type
-        EXPORTING
-          iv_object_type = iv_object_type
-        CHANGING
+      IF iv_object_type = 'ORG'.
+        CALL METHOD me->external_object_type
+          EXPORTING
+            iv_object_type = space
+        changing
           ct_json        = lt_json.
-
+      ELSE.
+        CALL METHOD me->external_object_type
+          EXPORTING
+            iv_object_type = iv_object_type
+          CHANGING
+            ct_json        = lt_json.
+      ENDIF.
     ENDLOOP.
     CALL METHOD zaco_cl_connection_ain=>construct_body
       EXPORTING
@@ -507,7 +513,7 @@ METHOD set_external_ids.
                                                     reason = lv_reason ).
 
     lv_json = lo_http_client->response->get_cdata( ).
-    IF lv_status_code >= '200' and lv_status_code < '400' .
+    IF lv_status_code >= '200' AND lv_status_code < '400' .
       gs_msg-msgid = 'ZACO'.
       gs_msg-msgty = 'S'.
       gs_msg-msgno = '301'.
