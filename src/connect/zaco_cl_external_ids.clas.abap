@@ -24,6 +24,7 @@ public section.
       !IV_RFCDEST type RFCDEST
       !IV_EXTERNAL_ID type STRING
       !IV_SYSTEMNAME type STRING
+      !IV_OBJECTTYPE type STRING
     changing
       !CV_OK type CHAR1
       !CS_EXTERNAL_ID type ZACO_S_EXTERNAL_ID_OBJECTS
@@ -246,7 +247,8 @@ METHOD FIND_EXTERNAL_ID.
 *       name_mappings    =
       CHANGING
         data        = lt_ext_ids.
-      read table lt_ext_ids into cs_external_id with key systemname = iv_systemname.
+      read table lt_ext_ids into cs_external_id with key systemname = iv_systemname
+                                                         objecttype = iv_objecttype.
       if sy-subrc = 0.
         cv_ok = 'X'.
       endif.
