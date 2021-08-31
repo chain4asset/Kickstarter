@@ -454,6 +454,12 @@
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
+     <MSGNR>307</MSGNR>
+     <TEXT>Equipment &amp;1 wurde erfolgreich geändert.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
      <MSGNR>400</MSGNR>
      <TEXT>*-------------------- Material</TEXT>
     </T100>
@@ -606,6 +612,24 @@
      <ARBGB>ZACO</ARBGB>
      <MSGNR>702</MSGNR>
      <TEXT>Keine Partner anEquipment &amp;1 ermittelbar.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>800</MSGNR>
+     <TEXT>*--------------Bilder</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>801</MSGNR>
+     <TEXT>Bild &amp;1 konnte nicht ins AIN geladen werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>802</MSGNR>
+     <TEXT>Bild &amp;1 konnte erfolgreich geladen werden.</TEXT>
     </T100>
    </T100>
    <LONGTEXTS>
