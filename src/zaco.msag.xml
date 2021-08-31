@@ -556,6 +556,42 @@
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
+     <MSGNR>606</MSGNR>
+     <TEXT>Bei Standort &amp;1 trat der HTTP Fehler &amp;2 auf.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>608</MSGNR>
+     <TEXT>Beim Update von Location &amp;1 ist ein Problem aufgetreten.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>609</MSGNR>
+     <TEXT>Update von Location &amp;1 war erfolgreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>610</MSGNR>
+     <TEXT>Adress und Geodaten für &amp;1 konnten nicht gelesen werden.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>611</MSGNR>
+     <TEXT>Beim Update von Location &amp;1 ist ein Problem mit Adressdaten aufgetreten.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>612</MSGNR>
+     <TEXT>Update von Location &amp;1 Adressdaten war erfolgreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
      <MSGNR>700</MSGNR>
      <TEXT>*-----------------------Business Partner</TEXT>
     </T100>
@@ -621,6 +657,61 @@
       <TLINE>
        <TDFORMAT>AS</TDFORMAT>
        <TDLINE>Produktdatenblätter an Equipmenst laden müssen.</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>U1</TDFORMAT>
+       <TDLINE>&amp;SYS_ADMIN&amp;</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
+      </TLINE>
+     </LINES>
+    </item>
+    <item>
+     <DOKIL>
+      <ID>NA</ID>
+      <OBJECT>ZACO611</OBJECT>
+      <LANGU>D</LANGU>
+      <TYP>E</TYP>
+      <VERSION>0002</VERSION>
+      <MASTERLANG>X</MASTERLANG>
+      <TXTLINES>00001</TXTLINES>
+     </DOKIL>
+     <HEAD>
+      <TDOBJECT>DOKU</TDOBJECT>
+      <TDNAME>ZACO611</TDNAME>
+      <TDID>NA</TDID>
+      <TDSPRAS>D</TDSPRAS>
+      <TDFORM>S_DOCU_SHOW</TDFORM>
+      <TDSTYLE>S_DOCUS1</TDSTYLE>
+      <TDVERSION>00002</TDVERSION>
+      <TDLINESIZE>072</TDLINESIZE>
+     </HEAD>
+     <LINES>
+      <TLINE>
+       <TDFORMAT>U1</TDFORMAT>
+       <TDLINE>&amp;CAUSE&amp;</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
+       <TDLINE>Adressdaten und oder Geodaten konnten verändert werden</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>U1</TDFORMAT>
+       <TDLINE>&amp;SYSTEM_RESPONSE&amp;</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>U1</TDFORMAT>
+       <TDLINE>&amp;WHAT_TO_DO&amp;</TDLINE>
+      </TLINE>
+      <TLINE>
+       <TDFORMAT>AS</TDFORMAT>
       </TLINE>
       <TLINE>
        <TDFORMAT>U1</TDFORMAT>
