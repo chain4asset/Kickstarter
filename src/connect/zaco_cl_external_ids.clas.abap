@@ -115,19 +115,19 @@ METHOD EXTERNAL_OBJECT_TYPE.
 ENDMETHOD.
 
 
-METHOD FIND_EXTERNAL_ID.
+METHOD find_external_id.
 
   DATA: lo_http_client  TYPE REF TO if_http_client.
 
-  data: lt_ext_ids      type ZACO_TT_EXTERNAL_ID_OBJECTS.
-  DATA: ls_ext_ids      TYPE ZACO_S_EXTERNAL_ID_OBJECTS.
+  DATA: lt_ext_ids      TYPE zaco_tt_external_id_objects.
+  DATA: ls_ext_ids      TYPE zaco_s_external_id_objects.
 
   DATA: lv_body         TYPE string.
   DATA: lv_service      TYPE string.
   DATA: lv_status_code  TYPE i.
   DATA: lv_reason       TYPE string.
   DATA: lv_json         TYPE string.
-  data: lv_equnr        type equnr.
+  DATA: lv_equnr        TYPE equnr.
 
 
   CALL METHOD zaco_cl_connection_ain=>connect_to_ain
@@ -191,53 +191,53 @@ METHOD FIND_EXTERNAL_ID.
 *-----------------------------------------------------------------------
 * Set Request URI
 *-----------------------------------------------------------------------
-    CONCATENATE zaco_cl_connection_ain=>gv_service '/objectsid/ainobjects(' iv_external_id ')' INTO lv_service.
-    cl_http_utility=>set_request_uri( request = lo_http_client->request
-                                         uri  = lv_service ).
+  CONCATENATE zaco_cl_connection_ain=>gv_service '/objectsid/ainobjects(' iv_external_id ')' INTO lv_service.
+  cl_http_utility=>set_request_uri( request = lo_http_client->request
+                                       uri  = lv_service ).
 
-    lo_http_client->request->set_method( 'GET' ).
-    lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
-    lo_http_client->request->set_cdata( lv_body ).
+  lo_http_client->request->set_method( 'GET' ).
+  lo_http_client->request->set_header_field( name = 'Content-Type' value = 'application/json' ).
+  lo_http_client->request->set_cdata( lv_body ).
 **-----------------------------------------------------------------------
 ** Send Request and Receive Response
 **-----------------------------------------------------------------------
-    lo_http_client->send(
-      EXCEPTIONS
-      http_communication_failure = 1
-      http_invalid_state         = 2
-      http_processing_failed     = 3
-      http_invalid_timeout       = 4
-      OTHERS                     = 5 ).
+  lo_http_client->send(
+    EXCEPTIONS
+    http_communication_failure = 1
+    http_invalid_state         = 2
+    http_processing_failed     = 3
+    http_invalid_timeout       = 4
+    OTHERS                     = 5 ).
 
-    lo_http_client->receive(
-      EXCEPTIONS
-      http_communication_failure = 1
-      http_invalid_state         = 2
-      http_processing_failed     = 3
-      OTHERS                     = 4 ).
+  lo_http_client->receive(
+    EXCEPTIONS
+    http_communication_failure = 1
+    http_invalid_state         = 2
+    http_processing_failed     = 3
+    OTHERS                     = 4 ).
 
-    lo_http_client->response->get_status( IMPORTING code   = lv_status_code
-                                                    reason = lv_reason ).
+  lo_http_client->response->get_status( IMPORTING code   = lv_status_code
+                                                  reason = lv_reason ).
 
-    lv_json = lo_http_client->response->get_cdata( ).
-    IF lv_status_code = '200'.
+  lv_json = lo_http_client->response->get_cdata( ).
+  IF lv_status_code = '200'.
 
-      gs_msg-msgid = 'ZACO'.
-      gs_msg-msgty = 'S'.
-      gs_msg-msgno = '301'.
-      gs_msg-msgv1 = iv_external_id.
-      lv_json  = lv_json.
-      CALL METHOD zaco_cl_error_log=>write_error
-        EXPORTING
-          iv_msgty     = gs_msg-msgty
-          iv_json      = lv_json
-          iv_equnr     = lv_equnr
-          iv_msgno     = gs_msg-msgno
-          iv_msgid     = gs_msg-msgid
-          iv_msgv1     = gs_msg-msgv1
-          iv_err_group = 'EQUI'.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'S'.
+    gs_msg-msgno = '301'.
+    gs_msg-msgv1 = iv_external_id.
+    lv_json  = lv_json.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'EQUI'.
 
-     CALL METHOD /ui2/cl_json=>deserialize
+    CALL METHOD /ui2/cl_json=>deserialize
       EXPORTING
         json        = lv_json
 *       jsonx       =
@@ -247,32 +247,33 @@ METHOD FIND_EXTERNAL_ID.
 *       name_mappings    =
       CHANGING
         data        = lt_ext_ids.
-      read table lt_ext_ids into cs_external_id with key systemname = iv_systemname
-                                                         objecttype = iv_objecttype.
-      if sy-subrc = 0.
-        cv_ok = 'X'.
-      endif.
-    ELSE.
-      gs_msg-msgid = 'ZACO'.
-      gs_msg-msgty = 'E'.
-      gs_msg-msgno = '302'.
-      gs_msg-msgv1 = iv_external_id.
-      lv_json  = lv_json.
-      CALL METHOD zaco_cl_error_log=>write_error
-        EXPORTING
-          iv_msgty     = gs_msg-msgty
-          iv_json      = lv_json
-          iv_equnr     = lv_equnr
-          iv_msgno     = gs_msg-msgno
-          iv_msgid     = gs_msg-msgid
-          iv_msgv1     = gs_msg-msgv1
-          iv_err_group = 'EQUI'.
-      cv_ok = space.
+    SORT lt_ext_ids BY changedon DESCENDING.
+    READ TABLE lt_ext_ids INTO cs_external_id WITH KEY systemname = iv_systemname
+                                                       objecttype = iv_objecttype.
+    IF sy-subrc = 0.
+      cv_ok = 'X'.
     ENDIF.
+  ELSE.
+    gs_msg-msgid = 'ZACO'.
+    gs_msg-msgty = 'E'.
+    gs_msg-msgno = '302'.
+    gs_msg-msgv1 = iv_external_id.
+    lv_json  = lv_json.
+    CALL METHOD zaco_cl_error_log=>write_error
+      EXPORTING
+        iv_msgty     = gs_msg-msgty
+        iv_json      = lv_json
+        iv_equnr     = lv_equnr
+        iv_msgno     = gs_msg-msgno
+        iv_msgid     = gs_msg-msgid
+        iv_msgv1     = gs_msg-msgv1
+        iv_err_group = 'EQUI'.
+    cv_ok = space.
+  ENDIF.
 
-    lo_http_client->close( ).
-    CLEAR lv_json.
-    CLEAR lv_service.
+  lo_http_client->close( ).
+  CLEAR lv_json.
+  CLEAR lv_service.
 *  ELSE.
 *    RAISE no_data.
 *  ENDIF.
