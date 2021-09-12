@@ -598,6 +598,42 @@
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
+     <MSGNR>613</MSGNR>
+     <TEXT>In Bearbeitung setzen schlug für Location &amp;1 fehl.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>614</MSGNR>
+     <TEXT>In Bearbeitung setzen war für Location &amp;1 erfolgreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>615</MSGNR>
+     <TEXT>Location &amp;1 Veröffentlichung schlug fehl.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>616</MSGNR>
+     <TEXT>Location &amp;1 Veröffentlichung war erfolgreich.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>650</MSGNR>
+     <TEXT>*------------ Model und templates</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>651</MSGNR>
+     <TEXT>Kein Modell mit Name &amp;1 zu Objekt &amp;2 vorhanden,</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
      <MSGNR>700</MSGNR>
      <TEXT>*-----------------------Business Partner</TEXT>
     </T100>
