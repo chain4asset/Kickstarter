@@ -652,6 +652,24 @@
     <T100>
      <SPRSL>D</SPRSL>
      <ARBGB>ZACO</ARBGB>
+     <MSGNR>750</MSGNR>
+     <TEXT>*--------------Geodaten</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>751</MSGNR>
+     <TEXT>Adresse &amp;1 nicht eindeutig.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>752</MSGNR>
+     <TEXT>Anfrage an Geodienst für &amp;1 fehlgeschlagen.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
      <MSGNR>800</MSGNR>
      <TEXT>*--------------Bilder</TEXT>
     </T100>
