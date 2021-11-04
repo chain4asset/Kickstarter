@@ -8,18 +8,18 @@ public section.
     importing
       !IV_BWA_UPLOAD type CHAR1 optional
       !IV_EQUNR type EQUNR
-      !IO_EQUIPMENT type ref to ZPSPP_CL_EQUIPMENT optional
+      !IO_EQUIPMENT type ref to ZACO_CL_EQUIP_ERP optional
     changing
-      !CT_PHIO type ZPSAIN_T_PHIO .
+      !CT_PHIO type ZACO_T_PHIO .
   methods UPLOAD_DOCUMENT
     importing
       !IV_EQUNR type EQUNR
       !IV_RFCDEST type RFCDEST optional
-      !IO_EQUIPMENT type ref to ZPSPP_CL_EQUIPMENT optional
+      !IO_EQUIPMENT type ref to ZACO_CL_EQUIP_ERP optional
       !IV_BWA_UPLOAD type CHAR1 optional
     changing
-      !CT_RESULT type ZPSAIN_T_JSON_BODY
-      !CT_DOC_IDS type ZPSAIN_T_JSON_BODY .
+      !CT_RESULT type ZACO_T_JSON_BODY
+      !CT_DOC_IDS type ZACO_T_JSON_BODY .
   methods ERMITTLE_DOCUMENT_ID
     importing
       !IV_FILENAME type STRING
@@ -31,14 +31,14 @@ public section.
       !IV_EQUNR type EQUNR
       !IV_RFCDEST type RFCDEST optional
     changing
-      !CT_RESULT type ZPSAIN_T_JSON_BODY
-      !CT_DOC_IDS type ZPSAIN_T_JSON_BODY .
+      !CT_RESULT type ZACO_T_JSON_BODY
+      !CT_DOC_IDS type ZACO_T_JSON_BODY .
   methods GET_EQUIPMENT_VERSION
     importing
       !IV_EQUNR type EQUNR
       !IV_RFCDEST type RFCDEST
     changing
-      !CT_RESULT type ZPSAIN_T_JSON_BODY
+      !CT_RESULT type ZACO_T_JSON_BODY
       !CV_VERSION type STRING .
 protected section.
 
@@ -46,60 +46,60 @@ protected section.
     importing
       !IV_EQUNR type EQUNR
     changing
-      !CT_DOKNR type ZPSAIN_T_DOKNR .
+      !CT_DOKNR type ZACO_T_DOKNR .
   methods READ_DRAW
     importing
-      !IT_DOKNR type ZPSAIN_T_DOKNR
+      !IT_DOKNR type ZACO_T_DOKNR
     changing
-      !CT_DOKVR type ZPSAIN_T_DOKVER .
+      !CT_DOKVR type ZACO_T_DOKVER .
   methods READ_LOIO
     importing
-      !IT_DOKVR type ZPSAIN_T_DOKVER
+      !IT_DOKVR type ZACO_T_DOKVER
     changing
-      !CT_PHIO type ZPSAIN_T_PHIO .
+      !CT_PHIO type ZACO_T_PHIO .
   methods PHASE_CODE
     importing
       !IV_ATWRT type ATWRT optional
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY
+      !CT_JSON type ZACO_T_JSON_BODY
       !CV_PHASECODE type STRING optional .
   methods CATEGORY_CODE
     importing
       !IV_ATWRT type ATWRT optional
     changing
       !CV_CATEGORY type STRING optional
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods DESCRIPTION
     importing
       !IV_DESCRIPTION type STRING
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods LANGUAGE_CODE
     importing
       !IV_SPRAS type SPRAS
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY
+      !CT_JSON type ZACO_T_JSON_BODY
       !CV_LANGU type CHAR2 .
   methods DOCUMENTID
     importing
       !IV_DOCID type STRING
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods ASSIGNEEID
     importing
       !IV_ASSIGNEEID type STRING
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods VERSION
     importing
       !IV_VERSION type STRING
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
   methods SHORTDESCRIPTION
     importing
       !IV_DESCRIPTION type STRING
     changing
-      !CT_JSON type ZPSAIN_T_JSON_BODY .
+      !CT_JSON type ZACO_T_JSON_BODY .
 private section.
 
   data GS_MSG type BAL_S_MSG .
@@ -112,7 +112,7 @@ CLASS ZACO_CL_DOCUMENT_UPLOAD IMPLEMENTATION.
 
 method ASSIGNEEID.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
 *---------- Leer
   ls_json-name = 'assigneeID'.
   ls_json-value = iv_assigneeid.
@@ -125,7 +125,7 @@ endmethod.
 
 method CATEGORY_CODE.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
 
   ls_json-name = 'categoryCode'.
   ls_json-value = '10'.
@@ -403,7 +403,7 @@ ENDMETHOD.
 
 method DESCRIPTION.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
 
   ls_json-name = 'description'.
   ls_json-value = iv_description.
@@ -413,7 +413,7 @@ endmethod.
 
 
 method DOCUMENTID.
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
 *---------- Leer
   ls_json-name = 'documentID'.
   ls_json-value = iv_docid.
@@ -430,9 +430,9 @@ METHOD ermittle_document_id.
   DATA: lo_http_client  TYPE REF TO if_http_client.
   DATA: lo_entity       TYPE REF TO if_http_entity.
 
-  DATA: lt_result       TYPE zpsain_t_json_body.
+  DATA: lt_result       TYPE zaco_t_json_body.
 
-  DATA: ls_result       TYPE zpsain_s_json_body.
+  DATA: ls_result       TYPE zaco_s_json_body.
 
   DATA: lv_status_code  TYPE i.
   DATA: lv_reason       TYPE string.
@@ -771,7 +771,7 @@ endmethod.
 
 method LANGUAGE_CODE.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
 
   ls_json-name = 'languageCode'.
   select single laiso from t002 into ls_json-value where spras = iv_spras.
@@ -784,7 +784,7 @@ endmethod.
 
 method PHASE_CODE.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
 
   ls_json-name = 'phaseCode'.
   ls_json-value = '4'.
@@ -806,10 +806,10 @@ ENDMETHOD.
 
 METHOD READ_DRAW.
 
-  DATA: lt_dokvr TYPE zpsain_t_dokver.
+  DATA: lt_dokvr TYPE zaco_t_dokver.
 
-  DATA: ls_doknr TYPE zpsain_s_doknr.
-  DATA: ls_dokvr TYPE zpsain_s_dokver.
+  DATA: ls_doknr TYPE zaco_s_doknr.
+  DATA: ls_dokvr TYPE zaco_s_dokver.
 
   DATA: lv_lines TYPE sy-tfill.
 
@@ -835,8 +835,8 @@ ENDMETHOD.
 
 METHOD READ_LOIO.
 
-  DATA: ls_dokvr TYPE zpsain_s_dokver.
-  DATA: ls_phio TYPE zpsain_s_phio.
+  DATA: ls_dokvr TYPE zaco_s_dokver.
+  DATA: ls_phio TYPE zaco_s_phio.
   DATA: lv_tabix TYPE sy-tabix.
 
   LOOP AT it_dokvr INTO ls_dokvr.
@@ -859,7 +859,7 @@ ENDMETHOD.
 
 method SHORTDESCRIPTION.
 
-  data: ls_json type zpsain_s_json_body.
+  data: ls_json type zaco_s_json_body.
 
   ls_json-name = 'shortDescription'.
   ls_json-value = iv_description.
@@ -1153,7 +1153,7 @@ ENDMETHOD.
 
 method VERSION.
 
-    data: ls_json type zpsain_s_json_body.
+    data: ls_json type zaco_s_json_body.
 *---------- Leer
   ls_json-name = 'version'.
 *  ls_json-value = '0.0'.    "iv_version.
