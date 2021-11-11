@@ -685,6 +685,18 @@
      <MSGNR>802</MSGNR>
      <TEXT>Bild &amp;1 konnte erfolgreich geladen werden.</TEXT>
     </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>803</MSGNR>
+     <TEXT>Unbekannte Fehlergruppe &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>D</SPRSL>
+     <ARBGB>ZACO</ARBGB>
+     <MSGNR>804</MSGNR>
+     <TEXT>Unbekannter JSON Typ</TEXT>
+    </T100>
    </T100>
    <LONGTEXTS>
     <item>
