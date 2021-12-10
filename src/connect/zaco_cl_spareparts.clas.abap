@@ -1330,164 +1330,164 @@ ENDMETHOD.
 
 
 METHOD sparepartdescription.
-
-  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
-
-  DATA: ls_json  TYPE zaco_s_json_body.
-  DATA: ls_cust  TYPE zaco_objects_cu.
-
-  DATA: lv_maktx TYPE maktx.
-  DATA: lv_normt TYPE normt.
-  DATA: lv_wrkst TYPE wrkst.
-
-  ls_json-name = 'sparepartDescription'.
-  ls_json-parent = ls_json-name.
-
-  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
-                                             fieldname  = 'SPAREPARTDESCRIPTION'.
-  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
-    IF ls_cust-useconstant = 'J'.
-      ls_json-value = ls_cust-constant.
-      APPEND ls_json TO ct_json.
-    ELSE.
-      IF ls_cust-use_userexit = 'J'.
-        CREATE OBJECT lo_exit.
-        CALL METHOD lo_exit->zchain_if_sparepart~sparepartdescription
-          EXPORTING
-            io_object = io_material
-          CHANGING
-            ct_json   = ct_json.
-      ELSE.
-        CALL METHOD io_material->get_ktxt
-          RECEIVING
-            cv_maktx = lv_maktx.
-
-        ls_json-value = lv_maktx.
-        APPEND ls_json TO ct_json.
-
-      ENDIF.
-    ENDIF.
-  ENDIF.
+*
+*  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+*
+*  DATA: ls_json  TYPE zaco_s_json_body.
+*  DATA: ls_cust  TYPE zaco_objects_cu.
+*
+*  DATA: lv_maktx TYPE maktx.
+*  DATA: lv_normt TYPE normt.
+*  DATA: lv_wrkst TYPE wrkst.
+*
+*  ls_json-name = 'sparepartDescription'.
+*  ls_json-parent = ls_json-name.
+*
+*  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+*                                             fieldname  = 'SPAREPARTDESCRIPTION'.
+*  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+*    IF ls_cust-useconstant = 'J'.
+*      ls_json-value = ls_cust-constant.
+*      APPEND ls_json TO ct_json.
+*    ELSE.
+*      IF ls_cust-use_userexit = 'J'.
+*        CREATE OBJECT lo_exit.
+*        CALL METHOD lo_exit->zchain_if_sparepart~sparepartdescription
+*          EXPORTING
+*            io_object = io_material
+*          CHANGING
+*            ct_json   = ct_json.
+*      ELSE.
+*        CALL METHOD io_material->get_ktxt
+*          RECEIVING
+*            cv_maktx = lv_maktx.
+*
+*        ls_json-value = lv_maktx.
+*        APPEND ls_json TO ct_json.
+*
+*      ENDIF.
+*    ENDIF.
+*  ENDIF.
 
 ENDMETHOD.
 
 
 METHOD sparepartdescription_langu.
 
-  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
-
-  DATA: lt_maktx TYPE makt_tab.
-
-  DATA: ls_json  TYPE zaco_s_json_body.
-  DATA: ls_cust  TYPE zaco_objects_cu.
-  DATA: ls_maktx TYPE makt.
-
-  DATA: lv_maktx TYPE maktx.
-  DATA: lv_langu TYPE char2.
-
-  ls_json-name = 'sparepartDescription'.
-  ls_json-parent = ls_json-name.
-
-  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
-                                             fieldname  = 'SPAREPARTDESCRIPTION'.
-  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
-    IF ls_cust-useconstant = 'J'.
-      CALL METHOD io_material->get_makt
-        CHANGING
-          ct_makt = lt_maktx.
-
-      READ TABLE lt_maktx INTO ls_maktx WITH KEY spras = ls_cust-constant.
-      IF sy-subrc = 0.
-
-        ls_json-name = 'sparepartDescription'.
-        ls_json-parent = 'sparepartDescriptions'.
-        ls_json-multiple = 'X'.
-        ls_json-multiple_body = 'X'.
-        ls_json-next = 'X'.
-        ls_json-value = ls_maktx-maktx.
-        APPEND ls_json TO ct_json.
-
-        CLEAR ls_json.
-
-        CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
-          EXPORTING
-            input  = ls_cust-constant
-          IMPORTING
-            output = lv_langu.
-
-        TRANSLATE lv_langu TO LOWER CASE.
-        ls_json-name = 'longDescription'.
-        ls_json-parent = 'sparepartDescriptions'.
-        ls_json-value = ls_maktx-maktx..
-        ls_json-multiple_body = 'X'.
-        APPEND ls_json TO ct_json.
-
-        CLEAR ls_json.
-
-        ls_json-name = 'languageISoCode'.
-        ls_json-parent = 'sparepartDescriptions'.
-        ls_json-value = ls_cust-constant.
-        ls_json-multiple_body = 'X'.
-        ls_json-last = 'X'.
-        APPEND ls_json TO ct_json.
-
-        CLEAR ls_json.
-
-        APPEND ls_json TO ct_json.
-      ENDIF.
-    ELSE.
-      IF ls_cust-use_userexit = 'J'.
-        CREATE OBJECT lo_exit.
-        CALL METHOD lo_exit->zchain_if_sparepart~sparepartdescription
-          EXPORTING
-            io_object = io_material
-          CHANGING
-            ct_json   = ct_json.
-      ELSE.
-        CALL METHOD io_material->get_makt
-          CHANGING
-            ct_makt = lt_maktx.
-
-        LOOP AT lt_maktx INTO ls_maktx WHERE spras NE '1'.
-
-          ls_json-name = 'sparepartDescription'.
-          ls_json-parent = 'sparepartDescriptions'.
-          ls_json-multiple = 'X'.
-          ls_json-multiple_body = 'X'.
-          ls_json-next = 'X'.
-          ls_json-value = ls_maktx-maktx.
-          APPEND ls_json TO ct_json.
-
-          CLEAR ls_json.
-
-          CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
-            EXPORTING
-              input  = ls_maktx-spras
-            IMPORTING
-              output = lv_langu.
-
-          TRANSLATE lv_langu TO LOWER CASE.
-          ls_json-name = 'longDescription'.
-          ls_json-parent = 'sparepartDescriptions'.
-          ls_json-value = ls_maktx-maktx..
-          ls_json-multiple_body = 'X'.
-          APPEND ls_json TO ct_json.
-
-          CLEAR ls_json.
-
-          ls_json-name = 'languageISoCode'.
-          ls_json-parent = 'sparepartDescriptions'.
-          ls_json-value = lv_langu.
-          ls_json-multiple_body = 'X'.
-          ls_json-last = 'X'.
-          APPEND ls_json TO ct_json.
-
-          CLEAR ls_json.
-
-        ENDLOOP.
-      ENDIF.
-    ENDIF.
-  ENDIF.
+*  DATA: lo_exit  TYPE REF TO zchain_cl_sparepart_exit.
+*
+*  DATA: lt_maktx TYPE makt_tab.
+*
+*  DATA: ls_json  TYPE zaco_s_json_body.
+*  DATA: ls_cust  TYPE zaco_objects_cu.
+*  DATA: ls_maktx TYPE makt.
+*
+*  DATA: lv_maktx TYPE maktx.
+*  DATA: lv_langu TYPE char2.
+*
+*  ls_json-name = 'sparepartDescription'.
+*  ls_json-parent = ls_json-name.
+*
+*  READ TABLE gt_custom INTO ls_cust WITH KEY objekttype = gc_sparepart
+*                                             fieldname  = 'SPAREPARTDESCRIPTION'.
+*  IF ( sy-subrc = 0 AND ls_cust-load_field = 'J' ) OR sy-subrc <> 0.
+*    IF ls_cust-useconstant = 'J'.
+*      CALL METHOD io_material->get_makt
+*        CHANGING
+*          ct_makt = lt_maktx.
+*
+*      READ TABLE lt_maktx INTO ls_maktx WITH KEY spras = ls_cust-constant.
+*      IF sy-subrc = 0.
+*
+*        ls_json-name = 'sparepartDescription'.
+*        ls_json-parent = 'sparepartDescriptions'.
+*        ls_json-multiple = 'X'.
+*        ls_json-multiple_body = 'X'.
+*        ls_json-next = 'X'.
+*        ls_json-value = ls_maktx-maktx.
+*        APPEND ls_json TO ct_json.
+*
+*        CLEAR ls_json.
+*
+*        CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
+*          EXPORTING
+*            input  = ls_cust-constant
+*          IMPORTING
+*            output = lv_langu.
+*
+*        TRANSLATE lv_langu TO LOWER CASE.
+*        ls_json-name = 'longDescription'.
+*        ls_json-parent = 'sparepartDescriptions'.
+*        ls_json-value = ls_maktx-maktx..
+*        ls_json-multiple_body = 'X'.
+*        APPEND ls_json TO ct_json.
+*
+*        CLEAR ls_json.
+*
+*        ls_json-name = 'languageISoCode'.
+*        ls_json-parent = 'sparepartDescriptions'.
+*        ls_json-value = ls_cust-constant.
+*        ls_json-multiple_body = 'X'.
+*        ls_json-last = 'X'.
+*        APPEND ls_json TO ct_json.
+*
+*        CLEAR ls_json.
+*
+*        APPEND ls_json TO ct_json.
+*      ENDIF.
+*    ELSE.
+*      IF ls_cust-use_userexit = 'J'.
+*        CREATE OBJECT lo_exit.
+*        CALL METHOD lo_exit->zchain_if_sparepart~sparepartdescription
+*          EXPORTING
+*            io_object = io_material
+*          CHANGING
+*            ct_json   = ct_json.
+*      ELSE.
+*        CALL METHOD io_material->get_makt
+*          CHANGING
+*            ct_makt = lt_maktx.
+*
+*        LOOP AT lt_maktx INTO ls_maktx WHERE spras NE '1'.
+*
+*          ls_json-name = 'sparepartDescription'.
+*          ls_json-parent = 'sparepartDescriptions'.
+*          ls_json-multiple = 'X'.
+*          ls_json-multiple_body = 'X'.
+*          ls_json-next = 'X'.
+*          ls_json-value = ls_maktx-maktx.
+*          APPEND ls_json TO ct_json.
+*
+*          CLEAR ls_json.
+*
+*          CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
+*            EXPORTING
+*              input  = ls_maktx-spras
+*            IMPORTING
+*              output = lv_langu.
+*
+*          TRANSLATE lv_langu TO LOWER CASE.
+*          ls_json-name = 'longDescription'.
+*          ls_json-parent = 'sparepartDescriptions'.
+*          ls_json-value = ls_maktx-maktx..
+*          ls_json-multiple_body = 'X'.
+*          APPEND ls_json TO ct_json.
+*
+*          CLEAR ls_json.
+*
+*          ls_json-name = 'languageISoCode'.
+*          ls_json-parent = 'sparepartDescriptions'.
+*          ls_json-value = lv_langu.
+*          ls_json-multiple_body = 'X'.
+*          ls_json-last = 'X'.
+*          APPEND ls_json TO ct_json.
+*
+*          CLEAR ls_json.
+*
+*        ENDLOOP.
+*      ENDIF.
+*    ENDIF.
+*  ENDIF.
 
 ENDMETHOD.
 

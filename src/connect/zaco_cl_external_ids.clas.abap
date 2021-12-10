@@ -235,7 +235,7 @@ METHOD find_external_id.
         iv_msgno     = gs_msg-msgno
         iv_msgid     = gs_msg-msgid
         iv_msgv1     = gs_msg-msgv1
-        iv_err_group = 'EQUI'.
+        iv_err_group = 'SYST'.
 
     CALL METHOD /ui2/cl_json=>deserialize
       EXPORTING
@@ -255,7 +255,7 @@ METHOD find_external_id.
     ENDIF.
   ELSE.
     gs_msg-msgid = 'ZACO'.
-    gs_msg-msgty = 'E'.
+    gs_msg-msgty = 'W'.
     gs_msg-msgno = '302'.
     gs_msg-msgv1 = iv_external_id.
     lv_json  = lv_json.
@@ -267,7 +267,7 @@ METHOD find_external_id.
         iv_msgno     = gs_msg-msgno
         iv_msgid     = gs_msg-msgid
         iv_msgv1     = gs_msg-msgv1
-        iv_err_group = 'EQUI'.
+        iv_err_group = 'SYST'.
     cv_ok = space.
   ENDIF.
 

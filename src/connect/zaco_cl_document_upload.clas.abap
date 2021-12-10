@@ -1119,7 +1119,7 @@ METHOD UPLOAD_DOCUMENT.
 *  go_http_client->refresh_request( ).
 
       lv_json = lo_http_client->response->get_cdata( ).
-      CALL METHOD zpsain_cl_json=>json_to_data
+      CALL METHOD zaco_cl_json=>json_to_data
         EXPORTING
           iv_json = lv_json
         CHANGING
